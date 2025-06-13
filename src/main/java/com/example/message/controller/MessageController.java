@@ -47,6 +47,11 @@ public class MessageController {
     public String loginPage() {
         return "login";
     }
+    
+    @GetMapping("/sales")
+    public String salesPage() {
+        return "sales";
+    }
 
     @GetMapping("/demand")
     public String demandPage() {
@@ -73,8 +78,6 @@ public class MessageController {
     public String login(@RequestParam String username,
                         @RequestParam String password,
                         Model model) {
-        String correctUsername = "leoleomiura";
-        String correctPassword = "leoleo24";
 
         List<Message> users = service.getAllMessages();
         boolean found = false;

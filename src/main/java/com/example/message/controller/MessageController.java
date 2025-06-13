@@ -1,7 +1,9 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
+import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
+import com.example.message.service.SalesDataService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,10 +50,12 @@ public class MessageController {
         return "login";
     }
     
-    @GetMapping("/sales")
-    public String salesPage() {
-        return "sales";
-    }
+    // @GetMapping("/sales")
+    // public String salesPage(Model model) {
+    //     List<SalesData> salesList = service.getAllSalesData();
+    //     model.addAttribute("salesList", salesList);
+    //     return "sales";
+    // }
 
     @GetMapping("/demand")
     public String demandPage() {

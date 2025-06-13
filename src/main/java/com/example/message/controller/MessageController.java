@@ -76,7 +76,25 @@ public class MessageController {
     public String staffPage() {
         return "staff";
     }
+    @GetMapping("/staff_change")
+    public String staff_changePage() {
+        return "staff_change";
+    }
 
+    @GetMapping("/main")
+    public String mainPage() {
+        return "main";
+    }
+
+    @GetMapping("/sales_input")
+    public String sales_inputPage() {
+        return "sales_input";
+    }
+
+    @GetMapping("/sales_change")
+    public String sales_changePage() {
+        return "sales_change";
+    }
 
     @PostMapping("/login")
     public String login(@RequestParam String username,

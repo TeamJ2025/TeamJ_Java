@@ -3,24 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <title>アカウント登録</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        main {
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #2c3e50;
+        }
+
+        form input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>新規アカウント登録</h1>
 
+<header>
+    <h1>新規アカウント登録</h1>
+</header>
+
+<main>
     <form method="post" action="/register">
         <input type="text" name="username" placeholder="ユーザーネーム">
         <input type="text" name="password" placeholder="パスワード">
         <button type="submit">登録</button>
     </form>
 
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+    <p th:if="${error}" th:text="${error}" class="error"></p>
 
     <h2>登録済みユーザー</h2>
     <ul>
         <li th:each="msg : ${messages}">
-            <strong th:text="${msg.username}">名前</strong>: 
+            <strong th:text="${msg.username}">名前</strong>:
             <span th:text="${msg.password}">パス</span>
         </li>
     </ul>
+</main>
+
 </body>
 </html>

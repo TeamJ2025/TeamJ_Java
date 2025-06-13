@@ -21,6 +21,6 @@ public class SalesDataController {
     public String showSalesData(Model model) {
         List<SalesData> salesList = service.getAllSalesData();
         model.addAttribute("salesList", salesList);
-        return "sales"; // sales.html を表示する予定
+        return "sales";
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 @Service
 public class SalesDataService {
+
     private final SalesDataRepository repository;
 
     public SalesDataService(SalesDataRepository repository) {
@@ -15,6 +16,6 @@ public class SalesDataService {
     }
 
     public List<SalesData> getAllSalesData() {
-        return repository.findAll();
+        return repository.findAllByOrderBySaleDayDesc();
     }
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sales Data</title>
+</head>
+<body>
+<h1>売上データ一覧</h1>
+<table border="1">
+    <tr>
+        <th>日付</th>
+        <th>売上合計 (円)</th>
+        <th>総杯数</th>
+    </tr>
+    <tr th:each="sale : ${salesList}">
+        <td th:text="${sale.saleDay}"></td>
+        <td th:text="${sale.totalSalesYen}"></td>
+        <td th:text="${sale.totalCups}"></td>
+    </tr>
+</table>
+</body>
+</html>

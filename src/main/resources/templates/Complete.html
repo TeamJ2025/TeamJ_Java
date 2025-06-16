@@ -2,43 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>販売完了</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        h2 {
-            color: #2c3e50;
-            margin-bottom: 30px;
-        }
-
-        input[type="submit"] {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #2980b9;
-        }
-    </style>
+    <title>販売実績入力完了</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<div class="container">
-    <h2>販売実績入力完了</h2>
+<header>
+    <h1>販売実績入力完了</h1>
+</header>
+<div class="container center">
+    <p>販売実績の入力が完了しました。</p>
     <form action="/Performance/PerformanceView" method="get">
         <input type="submit" value="トップに戻る">
     </form>

@@ -16,55 +16,55 @@ public class SalesData {
     private LocalDate saleDay;
 
     @Column(name = "total_sales_yen")
-    private int totalSalesYen;
+    private Integer totalSalesYen;
 
     @Column(name = "total_cups")
-    private int totalCups;
+    private Integer totalCups;
 
     @Column(name = "pale_ale_bottles")
-    private int paleAleBottles;
+    private Integer paleAleBottles;
 
     @Column(name = "pale_ale_yen")
-    private int paleAleYen;
+    private Integer paleAleYen;
 
     @Column(name = "lager_bottles")
-    private int lagerBottles;
+    private Integer lagerBottles;
 
     @Column(name = "lager_yen")
-    private int lagerYen;
+    private Integer lagerYen;
 
     @Column(name = "ipa_bottles")
-    private int ipaBottles;
+    private Integer ipaBottles;
 
     @Column(name = "ipa_yen")
-    private int ipaYen;
+    private Integer ipaYen;
 
     @Column(name = "white_beer_bottles")
-    private int whiteBeerBottles;
+    private Integer whiteBeerBottles;
 
     @Column(name = "white_beer_yen")
-    private int whiteBeerYen;
+    private Integer whiteBeerYen;
 
     @Column(name = "black_beer_bottles")
-    private int blackBeerBottles;
+    private Integer blackBeerBottles;
 
     @Column(name = "black_beer_yen")
-    private int blackBeerYen;
+    private Integer blackBeerYen;
 
     @Column(name = "fruit_beer_bottles")
-    private int fruitBeerBottles;
+    private Integer fruitBeerBottles;
 
     @Column(name = "fruit_beer_yen")
-    private int fruitBeerYen;
+    private Integer fruitBeerYen;
 
     @Column(name = "reservation_count")
-    private int reservationCount;
+    private Integer reservationCount;
 
     @Column(name = "reservation_people")
-    private int reservationPeople;
+    private Integer reservationPeople;
 
     @Column(name = "visitors")
-    private int visitors;
+    private Integer visitors;
 
     // ====== Getter and Setter ======
 
@@ -81,139 +81,139 @@ public class SalesData {
         this.saleDay = saleDay;
     }
 
-    public int getTotalSalesYen() {
+    public Integer getTotalSalesYen() {
         return totalSalesYen;
     }
 
-    public void setTotalSalesYen(int totalSalesYen) {
+    public void setTotalSalesYen(Integer totalSalesYen) {
         this.totalSalesYen = totalSalesYen;
     }
 
-    public int getTotalCups() {
+    public Integer getTotalCups() {
         return totalCups;
     }
 
-    public void setTotalCups(int totalCups) {
+    public void setTotalCups(Integer totalCups) {
         this.totalCups = totalCups;
     }
 
-    public int getPaleAleBottles() {
+    public Integer getPaleAleBottles() {
         return paleAleBottles;
     }
 
-    public void setPaleAleBottles(int paleAleBottles) {
+    public void setPaleAleBottles(Integer paleAleBottles) {
         this.paleAleBottles = paleAleBottles;
     }
 
-    public int getPaleAleYen() {
+    public Integer getPaleAleYen() {
         return paleAleYen;
     }
 
-    public void setPaleAleYen(int paleAleYen) {
+    public void setPaleAleYen(Integer paleAleYen) {
         this.paleAleYen = paleAleYen;
     }
 
-    public int getLagerBottles() {
+    public Integer getLagerBottles() {
         return lagerBottles;
     }
 
-    public void setLagerBottles(int lagerBottles) {
+    public void setLagerBottles(Integer lagerBottles) {
         this.lagerBottles = lagerBottles;
     }
 
-    public int getLagerYen() {
+    public Integer getLagerYen() {
         return lagerYen;
     }
 
-    public void setLagerYen(int lagerYen) {
+    public void setLagerYen(Integer lagerYen) {
         this.lagerYen = lagerYen;
     }
 
-    public int getIpaBottles() {
+    public Integer getIpaBottles() {
         return ipaBottles;
     }
 
-    public void setIpaBottles(int ipaBottles) {
+    public void setIpaBottles(Integer ipaBottles) {
         this.ipaBottles = ipaBottles;
     }
 
-    public int getIpaYen() {
+    public Integer getIpaYen() {
         return ipaYen;
     }
 
-    public void setIpaYen(int ipaYen) {
+    public void setIpaYen(Integer ipaYen) {
         this.ipaYen = ipaYen;
     }
 
-    public int getWhiteBeerBottles() {
+    public Integer getWhiteBeerBottles() {
         return whiteBeerBottles;
     }
 
-    public void setWhiteBeerBottles(int whiteBeerBottles) {
+    public void setWhiteBeerBottles(Integer whiteBeerBottles) {
         this.whiteBeerBottles = whiteBeerBottles;
     }
 
-    public int getWhiteBeerYen() {
+    public Integer getWhiteBeerYen() {
         return whiteBeerYen;
     }
 
-    public void setWhiteBeerYen(int whiteBeerYen) {
+    public void setWhiteBeerYen(Integer whiteBeerYen) {
         this.whiteBeerYen = whiteBeerYen;
     }
 
-    public int getBlackBeerBottles() {
+    public Integer getBlackBeerBottles() {
         return blackBeerBottles;
     }
 
-    public void setBlackBeerBottles(int blackBeerBottles) {
+    public void setBlackBeerBottles(Integer blackBeerBottles) {
         this.blackBeerBottles = blackBeerBottles;
     }
 
-    public int getBlackBeerYen() {
+    public Integer getBlackBeerYen() {
         return blackBeerYen;
     }
 
-    public void setBlackBeerYen(int blackBeerYen) {
+    public void setBlackBeerYen(Integer blackBeerYen) {
         this.blackBeerYen = blackBeerYen;
     }
 
-    public int getFruitBeerBottles() {
+    public Integer getFruitBeerBottles() {
         return fruitBeerBottles;
     }
 
-    public void setFruitBeerBottles(int fruitBeerBottles) {
+    public void setFruitBeerBottles(Integer fruitBeerBottles) {
         this.fruitBeerBottles = fruitBeerBottles;
     }
 
-    public int getFruitBeerYen() {
+    public Integer getFruitBeerYen() {
         return fruitBeerYen;
     }
 
-    public void setFruitBeerYen(int fruitBeerYen) {
+    public void setFruitBeerYen(Integer fruitBeerYen) {
         this.fruitBeerYen = fruitBeerYen;
     }
 
-    public int getReservationCount() {
+    public Integer getReservationCount() {
         return reservationCount;
     }
 
-    public void setReservationCount(int reservationCount) {
+    public void setReservationCount(Integer reservationCount) {
         this.reservationCount = reservationCount;
     }
 
-    public int getReservationPeople() {
+    public Integer getReservationPeople() {
         return reservationPeople;
     }
 
-    public void setReservationPeople(int reservationPeople) {
+    public void setReservationPeople(Integer reservationPeople) {
         this.reservationPeople = reservationPeople;
     }
 
-    public int getVisitors() {
+    public Integer getVisitors() {
         return visitors;
     }
 
-    public void setVisitors(int visitors) {
+    public void setVisitors(Integer visitors) {
         this.visitors = visitors;
     }
 }

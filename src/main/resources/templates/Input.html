@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>入力ページ</title>
+    <title>販売実績入力</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h2>本数を入力</h2>
+<header>
+    <h1>販売実績の入力</h1>
+</header>
+<div class="container">
     <form action="/Performance/Confirm" method="post">
-    <label for="whiteBeerBottles">ホワイトビール 800円</label>
-    <input type="number" name="whiteBeerBottles" id="whiteBeerBottles" min="0" max="100">
-
-    <label for="lagerBottles">ラガー 800円</label>
-    <input type="number" name="lagerBottles" id="lagerBottles" min="0" max="100">
-
-    <label for="paleAleBottles">ペールエール 1000円</label>
-    <input type="number" name="paleAleBottles" id="paleAleBottles" min="0" max="100">
-
-    <label for="fruitBeerBottles">フルーツビール 1000円</label>
-    <input type="number" name="fruitBeerBottles" id="fruitBeerBottles" min="0" max="100">
-
-    <label for="blackBeerBottles">黒ビール 1000円</label>
-    <input type="number" name="blackBeerBottles" id="blackBeerBottles" min="0" max="100">
-
-    <label for="ipaBottles">IPA 900円</label>
-    <input type="number" name="ipaBottles" id="ipaBottles" min="0" max="100">
-
-    <input type="submit" value="送信">
+        <label>ホワイトビール</label>
+        <input type="number" name="whiteBeerBottles" min="0" max="100">
+        <label>ラガー</label>
+        <input type="number" name="lagerBottles" min="0" max="100">
+        <label>ペールエール</label>
+        <input type="number" name="paleAleBottles" min="0" max="100">
+        <label>フルーツビール</label>
+        <input type="number" name="fruitBeerBottles" min="0" max="100">
+        <label>黒ビール</label>
+        <input type="number" name="blackBeerBottles" min="0" max="100">
+        <label>IPA</label>
+        <input type="number" name="ipaBottles" min="0" max="100">
+        <div class="center">
+            <input type="submit" value="送信">
+        </div>
     </form>
+</div>
 </body>
 </html>

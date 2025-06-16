@@ -22,10 +22,10 @@ public class PerformanceController {
     @Autowired
     private ConfirmViewHelper confirmViewHelper;
 
-    @RequestMapping("/Performance/PerformanceView")
-    public String start() {
-        return "PerformanceView.html";
-    }
+    // @RequestMapping("/Performance/PerformanceView")
+    // public String start() {
+    //     return "PerformanceView.html";
+    // }
 
     @RequestMapping("/Performance/Input")
     public String input(Model model) {

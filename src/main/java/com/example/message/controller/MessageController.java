@@ -62,10 +62,10 @@ public class MessageController {
         return "demand";
     }
 
-    @GetMapping("/forecast")
-    public String forecastPage() {
-        return "forecast";
-    }
+    // @GetMapping("/forecast")
+    // public String forecastPage() {
+    //     return "forecast";
+    // }
 
     @GetMapping("/brands")
     public String brandsPage() {
@@ -85,6 +85,12 @@ public class MessageController {
     public String mainPage() {
         return "main";
     }
+
+    @RequestMapping("/Performance/PerformanceView")
+    public String start() {
+        return "PerformanceView.html";
+    }
+
 
     @GetMapping("/sales_input")
     public String sales_inputPage() {

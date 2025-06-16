@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>販売実績入力</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h2>本数を入力</h2>
-    <form th:action="@{/Performance/Confirm}" th:object="${salesData}" method="post">
+<header>
+    <h1>販売実績入力</h1>
+</header>
+
+<div class="container">
+    <form th:action="@{/Performance/Confirm}" th:object="${salesData}" method="post" class="form-grid">
 
         <label for="whiteBeerBottles">ホワイトビール 900円</label>
         <input type="number" th:field="*{whiteBeerBottles}" min="0" max="100">
@@ -28,9 +31,10 @@
         <label for="ipaBottles">IPA 900円</label>
         <input type="number" th:field="*{ipaBottles}" min="0" max="100">
 
-        <input type="submit" value="送信">
+        <div class="form-center">
+            <input type="submit" value="送信">
+        </div>
     </form>
 </div>
 </body>
 </html>
-

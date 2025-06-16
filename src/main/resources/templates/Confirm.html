@@ -6,21 +6,33 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h2>入力情報を確認して送信ボタンを押してください</h2>
+<header>
+    <h1>販売内容の確認</h1>
+</header>
+
+<div class="container">
+    <p>入力内容をご確認の上、「確定」ボタンを押してください。</p>
 
     <form th:action="@{/Performance/Complete}" th:object="${salesData}" method="post">
 
-        ホワイトビール：<strong th:text="*{whiteBeerBottles}"></strong><br/>
-        ラガー：<strong th:text="*{lagerBottles}"></strong><br/>
-        ペールエール：<strong th:text="*{paleAleBottles}"></strong><br/>
-        フルーツビール：<strong th:text="*{fruitBeerBottles}"></strong><br/>
-        黒ビール：<strong th:text="*{blackBeerBottles}"></strong><br/>
-        IPA：<strong th:text="*{ipaBottles}"></strong><br/>
+        <table class="confirm-table">
+            <tr><td>ホワイトビール：</td><td th:text="*{whiteBeerBottles}"></td></tr>
+            <tr><td>ラガー：</td><td th:text="*{lagerBottles}"></td></tr>
+            <tr><td>ペールエール：</td><td th:text="*{paleAleBottles}"></td></tr>
+            <tr><td>フルーツビール：</td><td th:text="*{fruitBeerBottles}"></td></tr>
+            <tr><td>黒ビール：</td><td th:text="*{blackBeerBottles}"></td></tr>
+            <tr><td>IPA：</td><td th:text="*{ipaBottles}"></td></tr>
+            <tr>
+                <td><strong>総杯数：</strong></td>
+                <td><strong th:text="${total_cups}"></strong></td>
+            </tr>
+            <tr>
+                <td><strong>合計金額：</strong></td>
+                <td><strong th:text="${total_sales_yen} + ' 円'"></strong></td>
+            </tr>
+        </table>
 
-        総杯数：<strong th:text="${total_cups}"></strong><br/>
-        合計金額：<strong th:text="${total_sales_yen}"></strong><br/>
-
-        <!-- 送信用にhiddenで各フィールド値を渡す -->
+        <!-- hiddenフィールドで値を送信 -->
         <input type="hidden" th:field="*{whiteBeerBottles}" />
         <input type="hidden" th:field="*{lagerBottles}" />
         <input type="hidden" th:field="*{paleAleBottles}" />
@@ -28,8 +40,10 @@
         <input type="hidden" th:field="*{blackBeerBottles}" />
         <input type="hidden" th:field="*{ipaBottles}" />
 
-        <input type="submit" value="確定">
+        <div class="form-center" style="margin-top: 30px;">
+            <input type="submit" value="確定">
+        </div>
     </form>
+</div>
 </body>
 </html>
-

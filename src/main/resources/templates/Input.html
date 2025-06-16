@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入力ページ</title>
+</head>
+<body>
+    <h2>本数を入力</h2>
+    <form action="/Performance/Confirm" method="post">
+    <label for="whiteBeerBottles">ホワイトビール 800円</label>
+    <input type="number" name="whiteBeerBottles" id="whiteBeerBottles" min="0" max="100">
+
+    <label for="lagerBottles">ラガー 800円</label>
+    <input type="number" name="lagerBottles" id="lagerBottles" min="0" max="100">
+
+    <label for="paleAleBottles">ペールエール 1000円</label>
+    <input type="number" name="paleAleBottles" id="paleAleBottles" min="0" max="100">
+
+    <label for="fruitBeerBottles">フルーツビール 1000円</label>
+    <input type="number" name="fruitBeerBottles" id="fruitBeerBottles" min="0" max="100">
+
+    <label for="blackBeerBottles">黒ビール 1000円</label>
+    <input type="number" name="blackBeerBottles" id="blackBeerBottles" min="0" max="100">
+
+    <label for="ipaBottles">IPA 900円</label>
+    <input type="number" name="ipaBottles" id="ipaBottles" min="0" max="100">
+
+    <input type="submit" value="送信">
+    </form>
+</body>
+</html>

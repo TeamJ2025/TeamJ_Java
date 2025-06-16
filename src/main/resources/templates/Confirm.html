@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>確認ページ</title>
+</head>
+<body>
+    <h2>入力情報を確認して送信ボタンを押してください</h2>
+    <form action="/Performance/Complete" method="post">
+    ホワイトビール：<strong th:text="${been.whiteBeerBottles}"></strong><br/>
+    ラガー：<strong th:text="${been.lagerBottles}"></strong><br/>
+    ペールエール：<strong th:text="${been.paleAleBottles}"></strong><br/>
+    フルーツビール：<strong th:text="${been.fruitBeerBottles}"></strong><br/>
+    黒ビール：<strong th:text="${been.blackBeerBottles}"></strong><br/>
+    IPA：<strong th:text="${been.ipaBottles}"></strong><br/>
+    総杯数：<strong th:text="${total_cups}"></strong><br/>
+    合計金額：<strong th:text="${total_sales_yen}"></strong><br/>
+
+    <input type="submit" value="確定">
+    </form>
+
+    
+</body>
+</html>

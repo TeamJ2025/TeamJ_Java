@@ -11,13 +11,15 @@ public class Message {
     private Integer id;
 
     private String username;
+    private String email;
     private String password;
 
     public Message() {
     }
 
-    public Message(String username, String password) {
+    public Message(String username, String email, String password) {
         this.username = username;
+        this.email = email;
         this.password = password;
     }
 
@@ -27,6 +29,10 @@ public class Message {
 
     public String getUsername(){
         return username;
+    }
+
+    public String getEmail(){
+        return email;
     }
 
     public String getPassword(){

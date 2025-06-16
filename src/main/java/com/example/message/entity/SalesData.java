@@ -7,6 +7,10 @@ import java.time.LocalDate;
 @Table(name = "sales_date")
 public class SalesData {
 
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    // private User user;
+
     @Id
     @Column(name = "sale_day")
     private LocalDate saleDay;
@@ -63,6 +67,11 @@ public class SalesData {
     private int visitors;
 
     // ====== Getter and Setter ======
+
+    // public class User {  //主キー
+    //     private String name;
+    //     private String email;
+    // }
 
     public LocalDate getSaleDay() {
         return saleDay;

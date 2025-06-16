@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.message.been.PerformanceBeen;
 import com.example.message.entity.SalesData;
 import com.example.message.repository.PerformanceRepository;
 
@@ -17,69 +16,55 @@ public class PerformanceService {
     @Autowired
     private PerformanceRepository performanceRepository;
 
-    public Map<String, Integer> calculateAmounts(PerformanceBeen been) {
+    // 各ビールの売上計算
+    public Map<String, Integer> calculateAmounts(SalesData data) {
         Map<String, Integer> amounts = new HashMap<>();
-        amounts.put("white", been.getWhiteBeerBottles() * 900);
-        amounts.put("lager", been.getLagerBottles() * 800);
-        amounts.put("pale", been.getPaleAleBottles() * 1000);
-        amounts.put("fruit", been.getFruitBeerBottles() * 1000);
-        amounts.put("black", been.getBlackBeerBottles() * 1200);
-        amounts.put("ipa", been.getIpaBottles() * 900);
+        amounts.put("white", data.getWhiteBeerBottles() * 900);
+        amounts.put("lager", data.getLagerBottles() * 800);
+        amounts.put("pale", data.getPaleAleBottles() * 1000);
+        amounts.put("fruit", data.getFruitBeerBottles() * 1000);
+        amounts.put("black", data.getBlackBeerBottles() * 1200);
+        amounts.put("ipa", data.getIpaBottles() * 900);
         return amounts;
     }
 
-    public int calculateTotalAmount(Map<String, Integer> amounts) {
+    // 総売上計算
+    public int calculateTotalSalesYen(Map<String, Integer> amounts) {
         return amounts.values().stream().mapToInt(i -> i).sum();
     }
 
-    public int calculateTotalCount(PerformanceBeen been) {
-        return been.getWhiteBeerBottles() +
-               been.getLagerBottles() +
-               been.getPaleAleBottles() +
-               been.getFruitBeerBottles() +
-               been.getBlackBeerBottles() +
-               been.getIpaBottles();
+    // 総カップ数（本数合計）
+    public int calculateTotalCount(SalesData data) {
+        return data.getWhiteBeerBottles()
+             + data.getLagerBottles()
+             + data.getPaleAleBottles()
+             + data.getFruitBeerBottles()
+             + data.getBlackBeerBottles()
+             + data.getIpaBottles();
     }
 
-    public SalesData mapToEntity(PerformanceBeen been, int totalCups, int totalSalesYen) {
-        SalesData entity = new SalesData();
+    // DB保存用の整形
+    public SalesData enrichEntity(SalesData data, int totalCups, int totalSalesYen) {
+        data.setSaleDay(LocalDate.now());
+        data.setTotalCups(totalCups);
+        data.setTotalSalesYen(totalSalesYen);
+        data.setWhiteBeerYen(data.getWhiteBeerBottles() * 900);
+        data.setLagerYen(data.getLagerBottles() * 800);
+        data.setPaleAleYen(data.getPaleAleBottles() * 1000);
+        data.setFruitBeerYen(data.getFruitBeerBottles() * 1000);
+        data.setBlackBeerYen(data.getBlackBeerBottles() * 1200);
+        data.setIpaYen(data.getIpaBottles() * 900);
 
-        entity.setSaleDay(LocalDate.now());
-        entity.setTotalCups(totalCups);
-        entity.setTotalSalesYen(totalSalesYen);
-
-        entity.setWhiteBeerBottles(been.getWhiteBeerBottles());
-        entity.setWhiteBeerYen(been.getWhiteBeerBottles() * 900);
-
-        entity.setLagerBottles(been.getLagerBottles());
-        entity.setLagerYen(been.getLagerBottles() * 800);
-
-        entity.setPaleAleBottles(been.getPaleAleBottles());
-        entity.setPaleAleYen(been.getPaleAleBottles() * 1000);
-
-        entity.setFruitBeerBottles(been.getFruitBeerBottles());
-        entity.setFruitBeerYen(been.getFruitBeerBottles() * 1000);
-
-        entity.setBlackBeerBottles(been.getBlackBeerBottles());
-        entity.setBlackBeerYen(been.getBlackBeerBottles() * 1200);
-
-        entity.setIpaBottles(been.getIpaBottles());
-        entity.setIpaYen(been.getIpaBottles() * 900);
-
-        // 必要に応じて追加項目
-        // entity.setReservationCount(0);
-        // entity.setReservationPeople(0);
-        // entity.setVisitors(0);
-
-        return entity;
+        return data;
     }
 
-    public void savePerformance(PerformanceBeen been) {
-        Map<String, Integer> amounts = calculateAmounts(been);
-        int totalSalesYen = calculateTotalAmount(amounts);
-        int totalCups = calculateTotalCount(been);
+    // 保存ロジック（Controllerから呼ばれる）
+    public void savePerformance(SalesData data) {
+        Map<String, Integer> amounts = calculateAmounts(data);
+        int totalSalesYen = calculateTotalSalesYen(amounts);
+        int totalCups = calculateTotalCount(data);
 
-        SalesData entity = mapToEntity(been, totalCups, totalSalesYen);
+        SalesData entity = enrichEntity(data, totalCups, totalSalesYen);
         performanceRepository.save(entity);
     }
 }

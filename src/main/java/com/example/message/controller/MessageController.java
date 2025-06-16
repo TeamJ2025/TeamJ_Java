@@ -1,7 +1,9 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
+import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
+import com.example.message.service.SalesDataService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +49,13 @@ public class MessageController {
     public String loginPage() {
         return "login";
     }
+    
+    // @GetMapping("/sales")
+    // public String salesPage(Model model) {
+    //     List<SalesData> salesList = service.getAllSalesData();
+    //     model.addAttribute("salesList", salesList);
+    //     return "sales";
+    // }
 
     @GetMapping("/demand")
     public String demandPage() {
@@ -67,14 +76,30 @@ public class MessageController {
     public String staffPage() {
         return "staff";
     }
+    @GetMapping("/staff_change")
+    public String staff_changePage() {
+        return "staff_change";
+    }
 
+    @GetMapping("/main")
+    public String mainPage() {
+        return "main";
+    }
+
+    @GetMapping("/sales_input")
+    public String sales_inputPage() {
+        return "sales_input";
+    }
+
+    @GetMapping("/sales_change")
+    public String sales_changePage() {
+        return "sales_change";
+    }
 
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
                         Model model) {
-        String correctUsername = "leoleomiura";
-        String correctPassword = "leoleo24";
 
         List<Message> users = service.getAllMessages();
         boolean found = false;

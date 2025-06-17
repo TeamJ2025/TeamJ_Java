@@ -35,14 +35,14 @@ public class MessageController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestParam String username,
+    public String register(@RequestParam String name,
                            @RequestParam String email,
                            @RequestParam String password,
                            Model model) {
-        if(username.isBlank() || email.isBlank()|| password.isBlank()){
+        if(name.isBlank() || email.isBlank()|| password.isBlank()){
             model.addAttribute("error", "両方入力してください");
         } else {
-            service.addMessage(username, email, password);
+            service.addMessage(name, email, password);
         }
         List<Message> messages = service.getAllMessages();
         model.addAttribute("messages", messages);
@@ -52,6 +52,32 @@ public class MessageController {
     @GetMapping("/login")
     public String loginPage() {
         return "login";
+    }
+    @PostMapping("/login")
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        Model model) {
+
+        List<Message> users = service.getAllMessages();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        boolean found = false;
+
+        for (Message user : users) {
+            if (user.getEmail().equals(email)
+                    && passwordEncoder.matches(password, user.getPassword())) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            model.addAttribute("ok", "いかしてるぜ");
+            return "main";
+        } else {
+            model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+            return "notwelcome";
+        }
     }
     
     // @GetMapping("/sales")
@@ -77,7 +103,9 @@ public class MessageController {
     }
 
     @GetMapping("/staff")
-    public String staffPage() {
+    public String staffPage(Model model) {
+        List<Message> messages = service.getAllMessages();
+        model.addAttribute("messages", messages);
         return "staff";
     }
     @GetMapping("/staff_change")
@@ -99,31 +127,4 @@ public class MessageController {
     public String sales_changePage() {
         return "sales_change";
     }
-
-@PostMapping("/login")
-public String login(@RequestParam String email,
-                    @RequestParam String password,
-                    Model model) {
-
-    List<Message> users = service.getAllMessages();
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    boolean found = false;
-
-    for (Message user : users) {
-        if (user.getEmail().equals(email)
-                && passwordEncoder.matches(password, user.getPassword())) {
-            found = true;
-            break;
-        }
-    }
-
-    if (found) {
-        model.addAttribute("ok", "いかしてるぜ");
-        return "main";
-    } else {
-        model.addAttribute("error", "メールアドレスまたはパスワードが違います");
-        return "notwelcome";
-    }
-}
 }

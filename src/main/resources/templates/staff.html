@@ -13,7 +13,7 @@
 <main>
     <ul>
         <li th:each="msg : ${messages}">
-            <strong th:text="${msg.username}">名前</strong>:
+            <strong th:text="${msg.name}">名前</strong>:
             <strong th:text="${msg.email}">メールアドレス</strong>:
         </li>
     </ul>

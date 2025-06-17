@@ -22,8 +22,8 @@ public class MessageService {
         return repository.findAll();
     }
 
-    public void addMessage(String username, String email, String password){
+    public void addMessage(String name, String email, String password){
         String hashedPassword = passwordEncoder.encode(password);
-        repository.save(new Message(username, email, hashedPassword));
+        repository.save(new Message(name, email, hashedPassword));
     }
 }

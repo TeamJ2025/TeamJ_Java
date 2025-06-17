@@ -12,11 +12,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/").permitAll() // indexページだけ許可
-                .anyRequest().permitAll()         // 他も全部許可（必要に応じて制限可）
+                .requestMatchers("/").permitAll()
+                .anyRequest().permitAll()
             )
-            .csrf(csrf -> csrf.disable())         // POST送信用にCSRF無効（開発時向け）
-            .formLogin(login -> login.disable()); // Spring Securityのデフォルトログイン画面を無効
+            .csrf(csrf -> csrf.disable())
+            .formLogin(login -> login.disable());
 
         return http.build();
     }

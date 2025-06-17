@@ -5,8 +5,20 @@
     <title>ログイン成功</title>
 </head>
 <body>
-    <h1>おつかれい</h1>
+
+<header>
+    <h1>スタッフ一覧</h1>
+</header>
+
+<main>
+    <ul>
+        <li th:each="msg : ${messages}">
+            <strong th:text="${msg.username}">名前</strong>:
+            <strong th:text="${msg.email}">メールアドレス</strong>:
+        </li>
+    </ul>
     <a href="/main"><button>メインページに戻る</button></a>
     <a href="/staff_change"><button>スタッフを修正する</button></a>
+</main>
 </body>
 </html>

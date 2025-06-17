@@ -3,51 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>メインページ</title>
+    <link rel="stylesheet" href="/css/style.css">
     <style>
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background-color: #f9f9f9;
+        .main-wrapper {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px 30px 60px 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             text-align: center;
-            padding: 50px;
         }
 
-        h1 {
-            color: #333;
+        .main-wrapper h1 {
+            font-size: 28px;
             margin-bottom: 40px;
+            color: #2c3e50;
         }
 
-        .button-container {
+        .vertical-buttons {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
         }
 
-        a button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 15px 30px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        a button:hover {
-            background-color: #45a049;
+        .vertical-buttons form {
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>メインページです</h1>
-    <div class="button-container">
-        <a href="/Performance/PerformanceView"><button>販売予測</button></a>
-        <a href="/demand"><button>需要予測</button></a>
-        <a href="/brands"><button>銘柄追加</button></a>
-        <a href="/staff"><button>スタッフ管理</button></a>
+<header>
+    <h1>メインページ</h1>
+</header>
+
+<div class="main-wrapper">
+    <h1>機能選択</h1>
+    <div class="vertical-buttons">
+        <form action="/Performance/PerformanceView" method="get">
+            <input type="submit" value="販売予測">
+        </form>
+        <form action="/demand" method="get">
+            <input type="submit" value="需要予測">
+        </form>
+        <form action="/brands" method="get">
+            <input type="submit" value="銘柄追加">
+        </form>
+        <form action="/staff" method="get">
+            <input type="submit" value="スタッフ管理">
+        </form>
     </div>
+</div>
+
 </body>
 </html>

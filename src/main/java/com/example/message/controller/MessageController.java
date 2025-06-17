@@ -54,22 +54,12 @@ public class MessageController {
         return "login";
     }
     
-    // @GetMapping("/sales")
-    // public String salesPage(Model model) {
-    //     List<SalesData> salesList = service.getAllSalesData();
-    //     model.addAttribute("salesList", salesList);
-    //     return "sales";
-    // }
 
     @GetMapping("/demand")
     public String demandPage() {
         return "demand";
     }
 
-    // @GetMapping("/forecast")
-    // public String forecastPage() {
-    //     return "forecast";
-    // }
 
     @GetMapping("/brands")
     public String brandsPage() {
@@ -90,11 +80,19 @@ public class MessageController {
         return "main";
     }
 
+    @GetMapping("/mainForUsers")
+    public String mainPageForUsers() {
+        return "mainForUsers.html";
+    }
     @RequestMapping("/Performance/PerformanceView")
     public String start() {
         return "PerformanceView.html";
     }
 
+    @RequestMapping("/Performance/PerformanceViewForUsers")
+    public String startForUsers() {
+        return "PerformanceViewForUsers.html";
+    }
 
     @GetMapping("/sales_input")
     public String sales_inputPage() {

@@ -7,7 +7,7 @@
     <style>
         .input-table {
             width: 100%;
-            margin-top: 50px;
+            margin-top: 20px;
             table-layout: fixed;
         }
 
@@ -24,7 +24,7 @@
 
         .button-center {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -33,7 +33,7 @@
     <h1>販売実績入力</h1>
 </header>
 <div class="container">
-    <form th:action="@{/Performance/Confirm}" th:object="${salesData}" method="post">
+    <form th:action="@{/Performance/ConfirmForUsers}" th:object="${salesData}" method="post">
         <table class="input-table">
             <thead>
                 <tr>

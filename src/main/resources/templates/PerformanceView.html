@@ -4,18 +4,35 @@
     <meta charset="UTF-8">
     <title>販売実績メニュー</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .menu-wrapper {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* ボタン間の間隔 */
+        }
+
+        .menu-wrapper form {
+            width: 100%;
+            max-width: 300px;
+        }
+
+    </style>
 </head>
 <body>
 <header>
     <h1>販売実績メニュー</h1>
 </header>
 <div class="container center">
-    <form action="/Performance/Input" method="post">
-        <input type="submit" value="販売実績入力">
-    </form>
-    <form action="/sales" method="post">
-        <input type="submit" value="販売実績一覧">
-    </form>
+    <div class="menu-wrapper">
+        <form action="/Performance/Input" method="post">
+            <input type="submit" value="販売実績入力">
+        </form>
+        <form action="/sales" method="post">
+            <input type="submit" value="販売実績一覧">
+        </form>
+    </div>
 </div>
 </body>
 </html>

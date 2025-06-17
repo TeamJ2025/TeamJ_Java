@@ -10,6 +10,9 @@ import com.example.message.service.ForecastService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.message.model.CsvForecastRecord;
+import com.example.message.service.CsvForecastService;
+
 import java.util.List;
 
 @Controller
@@ -56,12 +59,26 @@ public class MessageController {
     // public String login(@RequestParam String email,
     //                     @RequestParam String password,
     //                     Model model) {
+    // @PostMapping("/login")
+    // public String login(@RequestParam String email,
+    //                     @RequestParam String password,
+    //                     Model model) {
 
+    //     List<Message> users = service.getAllMessages();
+    //     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     //     List<Message> users = service.getAllMessages();
     //     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //     boolean found = false;
+    //     boolean found = false;
 
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
     //     for (Message user : users) {
     //         if (user.getEmail().equals(email)
     //                 && passwordEncoder.matches(password, user.getPassword())) {
@@ -79,18 +96,23 @@ public class MessageController {
     //     }
     // }
     @Autowired
-    private ForecastService forecastService;
-
-    @GetMapping("/forecast")
-    public String getForecast(Model model) {
-        ForecastResult result = forecastService.fetchForecast();
-        model.addAttribute("forecast", result);
-        return "forecast";
-    }
+    private CsvForecastService csvForecastService;
+    //private ForecastService forecastService;
+    // APIができたら復活　csv-forecastをコメントアウト
     // @GetMapping("/forecast")
-    // public String forecastPage() {
+    // public String getForecast(Model model) {
+    //     ForecastResult result = forecastService.fetchForecast();
+    //     model.addAttribute("forecast", result);
     //     return "forecast";
     // }
+
+    @GetMapping("/csv-forecast")
+    public String showForecastFromCsv(Model model) {
+        List<CsvForecastRecord> records = csvForecastService.loadCsvForecast();
+        model.addAttribute("records", records);
+        return "csv_forecast"; 
+    }// → templates/csv_forecast.html
+    //APIができたらcsv-forecastをコメントアウト
 
     @GetMapping("/brands")
     public String brandsPage() {
@@ -136,4 +158,5 @@ public class MessageController {
     public String sales_changePage() {
         return "sales_change";
     }
+    
 }

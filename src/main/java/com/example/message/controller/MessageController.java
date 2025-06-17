@@ -1,16 +1,14 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
-import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
-import com.example.message.service.SalesDataService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.message.model.ForecastResult;
+import com.example.message.service.ForecastService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -79,13 +77,15 @@ public class MessageController {
             return "notwelcome";
         }
     }
-    
+    @Autowired
+    private ForecastService forecastService;
 
-    @GetMapping("/demand")
-    public String demandPage() {
-        return "demand";
+    @GetMapping("/forecast")
+    public String getForecast(Model model) {
+        ForecastResult result = forecastService.fetchForecast();
+        model.addAttribute("forecast", result);
+        return "forecast";
     }
-
 
     @GetMapping("/brands")
     public String brandsPage() {

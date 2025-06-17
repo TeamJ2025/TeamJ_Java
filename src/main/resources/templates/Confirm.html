@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <title>販売内容の確認</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .confirmation-text {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .confirm-table {
+            margin: 0 auto;
+        }
+
+        .form-center {
+            margin-top: 40px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <header>
@@ -11,7 +28,9 @@
 </header>
 
 <div class="container">
-    <p>入力内容をご確認の上、「確定」ボタンを押してください。</p>
+    <p class="confirmation-text">
+        入力内容をご確認の上、「確定」ボタンを押してください。
+    </p>
 
     <form th:action="@{/Performance/Complete}" th:object="${salesData}" method="post">
 
@@ -32,7 +51,6 @@
             </tr>
         </table>
 
-        <!-- hiddenフィールドで値を送信 -->
         <input type="hidden" th:field="*{whiteBeerBottles}" />
         <input type="hidden" th:field="*{lagerBottles}" />
         <input type="hidden" th:field="*{paleAleBottles}" />
@@ -40,7 +58,7 @@
         <input type="hidden" th:field="*{blackBeerBottles}" />
         <input type="hidden" th:field="*{ipaBottles}" />
 
-        <div class="form-center" style="margin-top: 30px;">
+        <div class="form-center">
             <input type="submit" value="確定">
         </div>
     </form>

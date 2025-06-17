@@ -39,6 +39,7 @@ public class MessageController {
                            Model model) {
         if(name.isBlank() || email.isBlank()|| password.isBlank()){
             model.addAttribute("error", "両方入力してください");
+            return "register"; 
         } else {
             service.addMessage(name, email, password);
         }
@@ -51,32 +52,32 @@ public class MessageController {
     public String loginPage() {
         return "login";
     }
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        Model model) {
+    // @PostMapping("/login")
+    // public String login(@RequestParam String email,
+    //                     @RequestParam String password,
+    //                     Model model) {
 
-        List<Message> users = service.getAllMessages();
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    //     List<Message> users = service.getAllMessages();
+    //     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        boolean found = false;
+    //     boolean found = false;
 
-        for (Message user : users) {
-            if (user.getEmail().equals(email)
-                    && passwordEncoder.matches(password, user.getPassword())) {
-                found = true;
-                break;
-            }
-        }
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
 
-        if (found) {
-            model.addAttribute("ok", "いかしてるぜ");
-            return "main";
-        } else {
-            model.addAttribute("error", "メールアドレスまたはパスワードが違います");
-            return "notwelcome";
-        }
-    }
+    //     if (found) {
+    //         model.addAttribute("ok", "いかしてるぜ");
+    //         return "main";
+    //     } else {
+    //         model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+    //         return "notwelcome";
+    //     }
+    // }
     @Autowired
     private ForecastService forecastService;
 
@@ -86,6 +87,10 @@ public class MessageController {
         model.addAttribute("forecast", result);
         return "forecast";
     }
+    // @GetMapping("/forecast")
+    // public String forecastPage() {
+    //     return "forecast";
+    // }
 
     @GetMapping("/brands")
     public String brandsPage() {

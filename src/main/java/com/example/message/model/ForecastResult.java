@@ -6,7 +6,7 @@ public class ForecastResult {
     private String dayOfWeek;
     private String weather;
     private double temperature;
-    private int predictedReservations;
+    private int reservationCount;
     private Map<String, Integer> predictedItems;
 
     // --- Getter & Setter ---
@@ -42,12 +42,12 @@ public class ForecastResult {
         this.temperature = temperature;
     }
 
-    public int getPredictedReservations() {
-        return predictedReservations;
+    public int getReservationCount() {
+        return reservationCount;
     }
 
-    public void setPredictedReservations(int predictedReservations) {
-        this.predictedReservations = predictedReservations;
+    public void setPredictedReservations(int reservationCount) {
+        this.reservationCount = reservationCount;
     }
 
     public Map<String, Integer> getPredictedItems() {

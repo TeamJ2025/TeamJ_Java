@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f6f9; /* 統一背景色 */
+            background-color: #f4f6f9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
 
         h1 {
             margin-bottom: 30px;
-            color: #2c3e50; /* 統一見出し色 */
+            color: #2c3e50;
         }
 
         input[type="text"],
@@ -39,7 +39,7 @@
         }
 
         button {
-            background-color: #2c3e50; /* 統一ボタン色 */
+            background-color: #2c3e50;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -51,7 +51,7 @@
         }
 
         button:hover {
-            background-color: #34495e; /* hover時も統一系 */
+            background-color: #34495e;
         }
     </style>
 </head>
@@ -59,9 +59,9 @@
 
 <div class="login-container">
     <h1>ログイン</h1>
-    <form method="post" action="/login">
-        <input type="text" name="email" placeholder="メールアドレス" required>
-        <input type="password" name="password" placeholder="パスワード" required>
+    <form th:action="@{/login}" method="post">
+        <input type="text" name="username" placeholder="メールアドレス">
+        <input type="password" name="password" placeholder="パスワード">
         <button type="submit">ログイン</button>
     </form>
     <form method="get" action="/register">

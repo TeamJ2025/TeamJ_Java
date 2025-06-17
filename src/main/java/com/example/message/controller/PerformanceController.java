@@ -22,16 +22,20 @@ public class PerformanceController {
     @Autowired
     private ConfirmViewHelper confirmViewHelper;
 
-    // @RequestMapping("/Performance/PerformanceView")
-    // public String start() {
-    //     return "PerformanceView.html";
-    // }
 
     @RequestMapping("/Performance/Input")
     public String input(Model model) {
         model.addAttribute("salesData", new SalesData());
         return "Input.html";
     }
+
+    
+    @RequestMapping("/Performance/InputForUsers")
+    public String inputForUsers(Model model) {
+        model.addAttribute("salesData", new SalesData());
+        return "InputForUsers.html";
+    }
+
 
     @PostMapping("/Performance/Confirm")
     public ModelAndView confirm(@ModelAttribute SalesData salesData) {
@@ -46,9 +50,28 @@ public class PerformanceController {
         return mv;
     }
 
+    @PostMapping("/Performance/ConfirmForUsers")
+    public ModelAndView confirmForUsers(@ModelAttribute SalesData salesData) {
+        ModelAndView mv = new ModelAndView("ConfirmForUsers.html");
+
+        Map<String, Integer> amounts = performanceService.calculateAmounts(salesData);
+        int totalSalesYen = performanceService.calculateTotalSalesYen(amounts);
+        int totalCups = performanceService.calculateTotalCount(salesData);
+
+        confirmViewHelper.setupConfirmModel(mv, salesData, amounts, totalCups, totalSalesYen);
+
+        return mv;
+    }
+
     @PostMapping("/Performance/Complete")
     public String complete(@ModelAttribute("salesData") SalesData salesData) {
         performanceService.savePerformance(salesData);
         return "Complete.html";
+    }
+
+    @PostMapping("/Performance/CompleteForUsers")
+    public String completeForUsers(@ModelAttribute("salesData") SalesData salesData) {
+        performanceService.savePerformance(salesData);
+        return "CompleteForUsers.html";
     }
 }

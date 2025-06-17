@@ -84,7 +84,7 @@
 
 <main>
     <form method="post" action="/register">
-        <input type="text" name="username" placeholder="名前">
+        <input type="text" name="name" placeholder="名前">
         <input type="text" name="email" placeholder="メールアドレス">
         <input type="text" name="password" placeholder="パスワード">
         <button type="submit">登録</button>
@@ -95,12 +95,14 @@
     <h2>登録済みユーザー</h2>
     <ul>
         <li th:each="msg : ${messages}">
-            <strong th:text="${msg.username}">名前</strong>:
+            <strong th:text="${msg.name}">名前</strong>:
             <strong th:text="${msg.email}">メールアドレス</strong>:
             <span th:text="${msg.password}">パスワード</span>
         </li>
     </ul>
 </main>
-
+    <form method="get" action="/login">
+        <button type="submit">戻る</button>
+    </form>
 </body>
 </html>

@@ -35,14 +35,14 @@ public class MessageController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestParam String username,
+    public String register(@RequestParam String name,
                            @RequestParam String email,
                            @RequestParam String password,
                            Model model) {
-        if(username.isBlank() || email.isBlank()|| password.isBlank()){
+        if(name.isBlank() || email.isBlank()|| password.isBlank()){
             model.addAttribute("error", "両方入力してください");
         } else {
-            service.addMessage(username, email, password);
+            service.addMessage(name, email, password);
         }
         List<Message> messages = service.getAllMessages();
         model.addAttribute("messages", messages);
@@ -53,23 +53,39 @@ public class MessageController {
     public String loginPage() {
         return "login";
     }
+    @PostMapping("/login")
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        Model model) {
+
+        List<Message> users = service.getAllMessages();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        boolean found = false;
+
+        for (Message user : users) {
+            if (user.getEmail().equals(email)
+                    && passwordEncoder.matches(password, user.getPassword())) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            model.addAttribute("ok", "いかしてるぜ");
+            return "main";
+        } else {
+            model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+            return "notwelcome";
+        }
+    }
     
-    // @GetMapping("/sales")
-    // public String salesPage(Model model) {
-    //     List<SalesData> salesList = service.getAllSalesData();
-    //     model.addAttribute("salesList", salesList);
-    //     return "sales";
-    // }
 
     @GetMapping("/demand")
     public String demandPage() {
         return "demand";
     }
 
-    // @GetMapping("/forecast")
-    // public String forecastPage() {
-    //     return "forecast";
-    // }
 
     @GetMapping("/brands")
     public String brandsPage() {
@@ -77,7 +93,9 @@ public class MessageController {
     }
 
     @GetMapping("/staff")
-    public String staffPage() {
+    public String staffPage(Model model) {
+        List<Message> messages = service.getAllMessages();
+        model.addAttribute("messages", messages);
         return "staff";
     }
     @GetMapping("/staff_change")
@@ -90,11 +108,19 @@ public class MessageController {
         return "main";
     }
 
+    @GetMapping("/mainForUsers")
+    public String mainPageForUsers() {
+        return "mainForUsers.html";
+    }
     @RequestMapping("/Performance/PerformanceView")
     public String start() {
         return "PerformanceView.html";
     }
 
+    @RequestMapping("/Performance/PerformanceViewForUsers")
+    public String startForUsers() {
+        return "PerformanceViewForUsers.html";
+    }
 
     @GetMapping("/sales_input")
     public String sales_inputPage() {
@@ -105,31 +131,4 @@ public class MessageController {
     public String sales_changePage() {
         return "sales_change";
     }
-
-@PostMapping("/login")
-public String login(@RequestParam String email,
-                    @RequestParam String password,
-                    Model model) {
-
-    List<Message> users = service.getAllMessages();
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    boolean found = false;
-
-    for (Message user : users) {
-        if (user.getEmail().equals(email)
-                && passwordEncoder.matches(password, user.getPassword())) {
-            found = true;
-            break;
-        }
-    }
-
-    if (found) {
-        model.addAttribute("ok", "いかしてるぜ");
-        return "main";
-    } else {
-        model.addAttribute("error", "メールアドレスまたはパスワードが違います");
-        return "notwelcome";
-    }
-}
 }

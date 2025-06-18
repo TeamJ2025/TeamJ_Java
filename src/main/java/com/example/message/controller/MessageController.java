@@ -1,9 +1,9 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
-import com.example.message.entity.SalesData;
+// import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
-import com.example.message.service.SalesDataService;
+// import com.example.message.service.SalesDataService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -126,13 +126,13 @@ public class MessageController {
     public String startForUsers() {
         return "PerformanceViewForUsers.html";
     }
-
+/* 
     @GetMapping("/Performance/Input")
     public String input(Model model) {
         model.addAttribute("salesData", new SalesData());
         return "Input";
     }
-
+*/
     @GetMapping("/sales_input")
     public String sales_inputPage() {
         return "sales_input";

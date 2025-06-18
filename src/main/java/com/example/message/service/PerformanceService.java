@@ -1,5 +1,7 @@
 package com.example.message.service;
 
+// 一時的にコメントアウト
+/* 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,3 +70,4 @@ public class PerformanceService {
         performanceRepository.save(entity);
     }
 }
+*/

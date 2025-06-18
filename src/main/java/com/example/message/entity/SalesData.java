@@ -1,4 +1,6 @@
-package com.example.message.entity;
+//Beer.java および Sales.java を作成したためコメントアウト
+
+/*package com.example.message.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -217,3 +219,4 @@ public class SalesData {
         this.visitors = visitors;
     }
 }
+*/

@@ -1,12 +1,26 @@
 package com.example.message.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.example.message.entity.Beer;
+
 // 一時的にコメントアウト
 /*  
 import com.example.message.entity.SalesData;
 import com.example.message.service.SalesDataService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,27 +33,25 @@ public class SalesDataController {
         this.service = service;
     }
 
-    @PostMapping("/sales")
+    @GetMapping("/sales")
     public String showSalesData(Model model) {
-    List<SalesData> salesList = service.getAllSalesData();
-    model.addAttribute("salesList", salesList);
-    return "sales";
+        List<SalesData> salesList = service.getAllSalesData();
+        model.addAttribute("salesList", salesList);
+        return "sales"; 
+    }
+
+    @PostMapping("/sales")
+    public String handlePostSalesData(Model model) {
+        List<SalesData> salesList = service.getAllSalesData();
+        model.addAttribute("salesList", salesList);
+        return "sales"; 
     }
 }
 */
 
 import com.example.message.entity.Sales;
-import com.example.message.entity.Beer;
+import com.example.message.entity.SalesData;
 import com.example.message.service.SalesDataService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.time.LocalDate;
 
 @Controller
 public class SalesDataController {
@@ -66,9 +78,16 @@ public class SalesDataController {
         return "sales";
     }
 
+    // @GetMapping("/sales")
+    // public String showSalesDataGet(Model model) {
+    //     return showSalesData(model);
+    // }
+
     @GetMapping("/sales")
     public String showSalesDataGet(Model model) {
-        return showSalesData(model);
+        List<Sales> salesList = service.getAllSalesData();
+        model.addAttribute("salesList", salesList);
+        return "sales"; 
     }
 
     // 日別集計データを作成するヘルパーメソッド

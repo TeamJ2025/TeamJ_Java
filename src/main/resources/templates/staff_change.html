@@ -2,10 +2,90 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>スタッフ情報編集</title>
+    <title>スタッフ修正</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        main {
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        a.button {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        a.button:hover {
+            background-color: #34495e;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            width: 50%;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
-    <h1>おつかれい</h1>
+
+<header>
+    <h1>スタッフ修正</h1>
+</header>
+
+<main>
+    <ul>
+        <li th:each="msg : ${messages}">
+            <span th:text="${msg.name}">名前</span>:
+            <span th:text="${msg.email}">メールアドレス</span>
+            <!-- 削除ボタン（formでPOST送信） -->
+            <form th:action="@{/staff/delete}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${msg.id}" />
+                <input type="submit" value="削除" onclick="return confirm('本当に削除しますか？');" />
+            </form>
+        </li>
+    </ul>
     <a href="/main"><button>メインページに戻る</button></a>
+</main>
 </body>
 </html>

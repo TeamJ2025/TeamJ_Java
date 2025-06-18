@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV予測結果</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 90%;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #888;
+            text-align: center;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 一週間分の販売データ（CSV）</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>曜日</th>
+                <th>来客数</th>
+                <th>販売カップ数</th>
+                <th>売上（円）</th>
+                <th>ペールエール</th>
+                <th>ラガー</th>
+                <th>IPA</th>
+                <th>ホワイト</th>
+                <th>ブラック</th>
+                <th>フルーツ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="record : ${records}">
+                <td th:text="${record.date}"></td>
+                <td th:text="${record.dayOfWeek}"></td>
+                <td th:text="${record.visitors}"></td>
+                <td th:text="${record.totalCups}"></td>
+                <td th:text="${record.totalSalesYen}"></td>
+                <td th:text="${record.paleAleBottles}"></td>
+                <td th:text="${record.lagerBottles}"></td>
+                <td th:text="${record.ipaBottles}"></td>
+                <td th:text="${record.whiteBeerBottles}"></td>
+                <td th:text="${record.blackBeerBottles}"></td>
+                <td th:text="${record.fruitBeerBottles}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,25 +1,36 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
-// import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
-// import com.example.message.service.SalesDataService;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.SalesDataService;
+
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.message.model.ForecastResult;
+import com.example.message.service.ForecastService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 
-
+import com.example.message.model.CsvForecastRecord;
+import com.example.message.service.CsvForecastService;
+import com.example.message.entity.SalesData;
 import java.util.List;
+
+import com.example.message.model.ForecastResult;
+import com.example.message.service.ForecastService;
+
 
 @Controller
 public class MessageController {
     private final MessageService service;
+    private final MessageRepository repository;
 
-    public MessageController(MessageService service){
+    public MessageController(MessageService service, MessageRepository repository){
         this.service =service;
+        this.repository = repository;
     }
 
     @GetMapping("/")
@@ -82,15 +93,57 @@ public class MessageController {
     // }
     
 
-    @GetMapping("/demand")
-    public String demandPage() {
-        return "demand";
-    }
+    // @GetMapping("/demand")
+    // public String demandPage() {
+    //     return "demand";
+    // }
 
+    // @GetMapping("/forecast")
+    // public String forecastPage() {
+    //     return "forecast";
+    // }
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
+
+    //     if (found) {
+    //         model.addAttribute("ok", "いかしてるぜ");
+    //         return "main";
+    //     } else {
+    //         model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+    //         return "notwelcome";
+    //     }
+    // }
+
+    @Autowired
+
+    private ForecastService forecastService;
+    // APIができたら復活　csv-forecastをコメントアウト
     @GetMapping("/forecast")
-    public String forecastPage() {
+    public String getForecast(Model model) {
+        ForecastResult result = forecastService.fetchForecast();
+        model.addAttribute("forecast", result);
         return "forecast";
     }
+    // private CsvForecastService csvForecastService;
+    // @GetMapping("/csv-forecast")
+    // public String showForecastFromCsv(Model model) {
+    //     List<CsvForecastRecord> records = csvForecastService.loadCsvForecast();
+    //     model.addAttribute("records", records);
+    //     return "csv_forecast"; 
+    // }// → templates/csv_forecast.html
+    //APIができたらcsv-forecastをコメントアウト
 
     @GetMapping("/brands")
     public String brandsPage() {
@@ -103,14 +156,18 @@ public class MessageController {
         model.addAttribute("messages", messages);
         return "staff";
     }
-    @GetMapping("/staff_change")
-    public String staff_changePage() {
-        return "staff_change";
-    }
+    // @GetMapping("/staff_change")
+    // public String staff_changePage() {
+    //     return "staff_change";
+    // }
 
     @GetMapping("/main")
     public String mainPage() {
         return "main";
+    }
+    @GetMapping("/main_user")
+    public String mainUserPage() {
+        return "main_user";
     }
 
     @GetMapping("/mainForUsers")
@@ -142,4 +199,19 @@ public class MessageController {
     public String sales_changePage() {
         return "sales_change";
     }
+
+    // スタッフ修正ページ表示
+    @GetMapping("/staff_change")
+    public String showStaffChange(Model model) {
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change"; // 上のHTMLファイル
+    }
+
+    @PostMapping("/staff/delete")
+    public String deleteStaff(@RequestParam Integer id) {
+        repository.deleteById(id);
+        return "redirect:/staff_change"; // 削除後に再読み込み
+    }
+
 }

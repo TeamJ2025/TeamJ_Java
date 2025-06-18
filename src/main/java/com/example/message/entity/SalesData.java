@@ -1,6 +1,6 @@
 //Beer.java および Sales.java を作成したためコメントアウト
 
-/*package com.example.message.entity;
+package com.example.message.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -8,10 +8,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "sales_date")
 public class SalesData {
-
-    // @ManyToOne
-    // @JoinColumn(name = "user_id")
-    // private User user;
 
     @Id
     @Column(name = "sale_day")
@@ -69,11 +65,6 @@ public class SalesData {
     private Integer visitors;
 
     // ====== Getter and Setter ======
-
-    // public class User {  //主キー
-    //     private String name;
-    //     private String email;
-    // }
 
     public LocalDate getSaleDay() {
         return saleDay;
@@ -219,4 +210,3 @@ public class SalesData {
         this.visitors = visitors;
     }
 }
-*/

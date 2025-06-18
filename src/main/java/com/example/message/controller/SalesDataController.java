@@ -20,16 +20,35 @@ public class SalesDataController {
     }
 
     @GetMapping("/sales")
-    public String showSalesData(Model model) {
-        List<SalesData> salesList = service.getAllSalesData();
+    public String showSalesData(@RequestParam(value = "year", defaultValue = "2025") int year,
+                                 @RequestParam(value = "month", defaultValue = "1") int month, 
+                                 Model model) {
+        List<SalesData> salesList = service.getSalesDataByMonth(year, month);
         model.addAttribute("salesList", salesList);
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
         return "sales"; 
     }
 
-    @PostMapping("/sales")
-    public String handlePostSalesData(Model model) {
-        List<SalesData> salesList = service.getAllSalesData();
+    // 1ヶ月分のデータを一括修正ページに表示
+    @GetMapping("/sales_change_all")
+    public String showSalesDataToChangeAll(@RequestParam("year") int year,
+                                           @RequestParam("month") int month, 
+                                           Model model) {
+        List<SalesData> salesList = service.getSalesDataByMonth(year, month);
         model.addAttribute("salesList", salesList);
-        return "sales"; 
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+        return "sales_change_all";  // 新しい修正ページ
+    }
+
+    // 修正内容を保存（1ヶ月分）
+    @PostMapping("/sales_change")
+    public String updateSalesDataAll(List<SalesData> updatedDataList, Model model) {
+        for (SalesData updatedData : updatedDataList) {
+            service.updateSalesData(updatedData);  // データを保存
+        }
+        model.addAttribute("message", "全てのデータが修正されました");
+        return "redirect:/sales";  // 修正後に売上データ一覧に戻る
     }
 }

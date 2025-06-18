@@ -195,10 +195,10 @@ public class MessageController {
         return "sales_input";
     }
 
-    @GetMapping("/sales_change")
-    public String sales_changePage() {
-        return "sales_change";
-    }
+    // @GetMapping("/sales_change")
+    // public String sales_changePage() {
+    //     return "sales_change";
+    // }
 
     // スタッフ修正ページ表示
     @GetMapping("/staff_change")

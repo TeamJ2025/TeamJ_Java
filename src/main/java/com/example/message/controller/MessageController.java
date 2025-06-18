@@ -59,19 +59,39 @@ public class MessageController {
     // public String login(@RequestParam String email,
     //                     @RequestParam String password,
     //                     Model model) {
-    // @PostMapping("/login")
-    // public String login(@RequestParam String email,
-    //                     @RequestParam String password,
-    //                     Model model) {
 
-    //     List<Message> users = service.getAllMessages();
-    //     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     //     List<Message> users = service.getAllMessages();
     //     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //     boolean found = false;
-    //     boolean found = false;
 
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
+
+    //     if (found) {
+    //         model.addAttribute("ok", "いかしてるぜ");
+    //         return "main";
+    //     } else {
+    //         model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+    //         return "notwelcome";
+    //     }
+    // }
+    
+
+    @GetMapping("/demand")
+    public String demandPage() {
+        return "demand";
+    }
+
+    @GetMapping("/forecast")
+    public String forecastPage() {
+        return "forecast";
+    }
     //     for (Message user : users) {
     //         if (user.getEmail().equals(email)
     //                 && passwordEncoder.matches(password, user.getPassword())) {

@@ -84,7 +84,6 @@
     </div>
 
     <div th:if="${salesList != null}" class="calendar">
-        <!-- Calendar Header -->
         <div class="calendar-day-header">日</div>
         <div class="calendar-day-header">月</div>
         <div class="calendar-day-header">火</div>
@@ -93,7 +92,6 @@
         <div class="calendar-day-header">金</div>
         <div class="calendar-day-header">土</div>
 
-        <!-- Sales Data -->
         <div th:each="data : ${salesList}" class="calendar-day">
             <div class="calendar-day-content">
                 <p th:text="${#temporals.format(data.saleDay, 'MM/dd')}"></p>

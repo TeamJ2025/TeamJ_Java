@@ -1,6 +1,7 @@
 package com.example.message.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,29 +91,52 @@ public class SalesDataController {
         return "sales"; 
     }
 
-    // 日別集計データを作成するヘルパーメソッド
     private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
         return salesList.stream()
-            .collect(Collectors.groupingBy(Sales::getSalesDate,
-                Collectors.toMap(
-                    sales -> sales.getBeer().getBeerName(),
-                    sales -> Map.of(
-                        "bottles", sales.getSoldBottles(),
-                        "amount", sales.getSoldBottles() * sales.getBeer().getPrice()
-                    ),
-                    (existing, replacement) -> {
-                        // 同じビール・同じ日に複数レコードがある場合の処理
-                        int existingBottles = (Integer) ((Map<String, Object>) existing).get("bottles");
-                        int existingAmount = (Integer) ((Map<String, Object>) existing).get("amount");
-                        int newBottles = (Integer) ((Map<String, Object>) replacement).get("bottles");
-                        int newAmount = (Integer) ((Map<String, Object>) replacement).get("amount");
-                        
-                        return Map.of(
-                            "bottles", existingBottles + newBottles,
-                            "amount", existingAmount + newAmount
-                        );
+            .collect(Collectors.groupingBy(Sales::getSalesDate))
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> {
+                    LocalDate date = entry.getKey();
+                    List<Sales> salesForDate = entry.getValue();
+
+                    // ビール別集計
+                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
+                    int totalBottles = 0;
+                    int totalAmount = 0;
+
+                    for (Sales sale : salesForDate) {
+                        String beerName = sale.getBeer().getBeerName();
+                        int bottles = sale.getSoldBottles();
+                        int amount = bottles * sale.getBeer().getPrice();
+
+                        beerData.merge(beerName,
+                            Map.of("bottles", bottles, "amount", amount),
+                            (existing, newEntry) -> {
+                                int existingBottles = existing.get("bottles");
+                                int existingAmount = existing.get("amount");
+                                int newBottles = newEntry.get("bottles");
+                                int newAmount = newEntry.get("amount");
+
+                                return Map.of(
+                                    "bottles", existingBottles + newBottles,
+                                    "amount", existingAmount + newAmount
+                                );
+                            });
+
+                        totalBottles += bottles;
+                        totalAmount += amount;
                     }
-                )
+
+                    // 1日分の結果Mapを返す
+                    return Map.of(
+                        "beerData", beerData,
+                        "totalBottles", totalBottles,
+                        "totalAmount", totalAmount
+                    );
+                }
             ));
     }
 }

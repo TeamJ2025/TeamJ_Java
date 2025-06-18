@@ -12,7 +12,7 @@ import java.util.Map;
 public class ForecastService {
     
         // PythonのAPIのURL（必要に応じて変更）
-    private static final String PYTHON_API_URL = "http://localhost:5000/predict";
+    private static final String PYTHON_API_URL = "http://localhost:7071/api/demand_prediction";
 
     public ForecastResult fetchForecast() {
         RestTemplate restTemplate = new RestTemplate();

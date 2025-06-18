@@ -1,7 +1,6 @@
 package com.example.message.controller;
 
 import com.example.message.service.MessageService;
-import com.example.message.entity.SalesData;
 import com.example.message.model.Message;
 import com.example.message.repository.MessageRepository;
 import com.example.message.service.SalesDataService;
@@ -10,11 +9,19 @@ import com.example.message.service.SalesDataService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.message.model.ForecastResult;
+import com.example.message.service.ForecastService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 
-
+import com.example.message.model.CsvForecastRecord;
+import com.example.message.service.CsvForecastService;
+import com.example.message.entity.SalesData;
 import java.util.List;
+
+import com.example.message.model.ForecastResult;
+import com.example.message.service.ForecastService;
+
 
 @Controller
 public class MessageController {
@@ -86,15 +93,57 @@ public class MessageController {
     // }
     
 
-    @GetMapping("/demand")
-    public String demandPage() {
-        return "demand";
-    }
+    // @GetMapping("/demand")
+    // public String demandPage() {
+    //     return "demand";
+    // }
 
+    // @GetMapping("/forecast")
+    // public String forecastPage() {
+    //     return "forecast";
+    // }
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
+    //     for (Message user : users) {
+    //         if (user.getEmail().equals(email)
+    //                 && passwordEncoder.matches(password, user.getPassword())) {
+    //             found = true;
+    //             break;
+    //         }
+    //     }
+
+    //     if (found) {
+    //         model.addAttribute("ok", "いかしてるぜ");
+    //         return "main";
+    //     } else {
+    //         model.addAttribute("error", "メールアドレスまたはパスワードが違います");
+    //         return "notwelcome";
+    //     }
+    // }
+
+    @Autowired
+
+    private ForecastService forecastService;
+    // APIができたら復活　csv-forecastをコメントアウト
     @GetMapping("/forecast")
-    public String forecastPage() {
+    public String getForecast(Model model) {
+        ForecastResult result = forecastService.fetchForecast();
+        model.addAttribute("forecast", result);
         return "forecast";
     }
+    // private CsvForecastService csvForecastService;
+    // @GetMapping("/csv-forecast")
+    // public String showForecastFromCsv(Model model) {
+    //     List<CsvForecastRecord> records = csvForecastService.loadCsvForecast();
+    //     model.addAttribute("records", records);
+    //     return "csv_forecast"; 
+    // }// → templates/csv_forecast.html
+    //APIができたらcsv-forecastをコメントアウト
 
     @GetMapping("/brands")
     public String brandsPage() {

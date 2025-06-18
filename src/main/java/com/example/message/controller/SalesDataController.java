@@ -27,8 +27,7 @@ public class SalesDataController {
     }
 
     @PostMapping("/sales")
-    public String handlePostSalesData(@RequestParam String someData, Model model) {
-        model.addAttribute("message", "送信されたデータ: " + someData);
+    public String handlePostSalesData(Model model) {
         List<SalesData> salesList = service.getAllSalesData();
         model.addAttribute("salesList", salesList);
         return "sales"; 

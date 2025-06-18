@@ -94,7 +94,7 @@
 
         <div th:each="data : ${salesList}" class="calendar-day">
             <div class="calendar-day-content">
-                <p th:text="${#temporals.format(data.saleDay, 'MM/dd')}"></p>
+                <p th:text="${#temporals.format(data.saleDate, 'MM/dd')}"></p>
                 <p th:text="${data.totalSalesYen != null ? #numbers.formatInteger(data.totalSalesYen, 0, 'COMMA') + ' 円' : '0 円'}"></p>
                 <p th:text="${data.totalCups != null ? data.totalCups : '0'}"></p>
             </div>

@@ -1,3 +1,5 @@
+//Beer.java および Sales.java を作成したためコメントアウト
+
 package com.example.message.entity;
 
 import jakarta.persistence.*;

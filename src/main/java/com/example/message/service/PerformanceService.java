@@ -16,7 +16,6 @@ public class PerformanceService {
     @Autowired
     private PerformanceRepository performanceRepository;
 
-    // 各ビールの売上計算
     public Map<String, Integer> calculateAmounts(SalesData data) {
         Map<String, Integer> amounts = new HashMap<>();
         amounts.put("white", data.getWhiteBeerBottles() * 900);
@@ -28,12 +27,10 @@ public class PerformanceService {
         return amounts;
     }
 
-    // 総売上計算
     public int calculateTotalSalesYen(Map<String, Integer> amounts) {
         return amounts.values().stream().mapToInt(i -> i).sum();
     }
 
-    // 総カップ数（本数合計）
     public int calculateTotalCount(SalesData data) {
         return data.getWhiteBeerBottles()
              + data.getLagerBottles()
@@ -43,7 +40,6 @@ public class PerformanceService {
              + data.getIpaBottles();
     }
 
-    // DB保存用の整形
     public SalesData enrichEntity(SalesData data, int totalCups, int totalSalesYen) {
         data.setSaleDay(LocalDate.now());
         data.setTotalCups(totalCups);
@@ -58,7 +54,6 @@ public class PerformanceService {
         return data;
     }
 
-    // 保存ロジック（Controllerから呼ばれる）
     public void savePerformance(SalesData data) {
         Map<String, Integer> amounts = calculateAmounts(data);
         int totalSalesYen = calculateTotalSalesYen(amounts);

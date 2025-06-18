@@ -2,10 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>スタッフ情報編集</title>
+    <title>スタッフ修正</title>
 </head>
 <body>
-    <h1>おつかれい</h1>
+
+<header>
+    <h1>スタッフ修正</h1>
+</header>
+
+<main>
+    <ul>
+        <li th:each="msg : ${messages}">
+            <span th:text="${msg.name}">名前</span>:
+            <span th:text="${msg.email}">メールアドレス</span>
+            <!-- 削除ボタン（formでPOST送信） -->
+            <form th:action="@{/staff/delete}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${msg.id}" />
+                <input type="submit" value="削除" onclick="return confirm('本当に削除しますか？');" />
+            </form>
+        </li>
+    </ul>
     <a href="/main"><button>メインページに戻る</button></a>
+</main>
 </body>
 </html>

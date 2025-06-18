@@ -60,6 +60,7 @@
         <thead>
             <tr>
                 <th>日付</th>
+                <th>ホワイトビールの値段</th>
                 <th>売上合計</th>
                 <th>総杯数</th>
             </tr>
@@ -67,6 +68,7 @@
         <tbody>
             <tr th:each="data : ${salesList}">
                 <td th:text="${data.saleDay}"></td>
+                <td th:text="${data.whiteBeerYen}"></td>
                 <td th:text="${#numbers.formatInteger(data.totalSalesYen, 0, 'COMMA')} + ' 円'"></td>
                 <td th:text="${data.totalCups}"></td>
             </tr>

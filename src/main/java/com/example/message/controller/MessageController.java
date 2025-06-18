@@ -2,6 +2,10 @@ package com.example.message.controller;
 
 import com.example.message.service.MessageService;
 import com.example.message.model.Message;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.SalesDataService;
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +22,11 @@ import java.util.List;
 @Controller
 public class MessageController {
     private final MessageService service;
+    private final MessageRepository repository;
 
-    public MessageController(MessageService service){
+    public MessageController(MessageService service, MessageRepository repository){
         this.service =service;
+        this.repository = repository;
     }
 
     @GetMapping("/")
@@ -146,14 +152,18 @@ public class MessageController {
         model.addAttribute("messages", messages);
         return "staff";
     }
-    @GetMapping("/staff_change")
-    public String staff_changePage() {
-        return "staff_change";
-    }
+    // @GetMapping("/staff_change")
+    // public String staff_changePage() {
+    //     return "staff_change";
+    // }
 
     @GetMapping("/main")
     public String mainPage() {
         return "main";
+    }
+    @GetMapping("/main_user")
+    public String mainUserPage() {
+        return "main_user";
     }
 
     @GetMapping("/mainForUsers")
@@ -185,5 +195,19 @@ public class MessageController {
     public String sales_changePage() {
         return "sales_change";
     }
-    
+
+    // スタッフ修正ページ表示
+    @GetMapping("/staff_change")
+    public String showStaffChange(Model model) {
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change"; // 上のHTMLファイル
+    }
+
+    @PostMapping("/staff/delete")
+    public String deleteStaff(@RequestParam Integer id) {
+        repository.deleteById(id);
+        return "redirect:/staff_change"; // 削除後に再読み込み
+    }
+
 }

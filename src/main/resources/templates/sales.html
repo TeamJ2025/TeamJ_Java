@@ -9,21 +9,33 @@
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         header {
             background-color: #2c3e50;
             color: white;
             padding: 20px;
+            width: 100%;
             text-align: center;
+            font-size: 24px;
         }
 
         .container {
             padding: 20px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
         }
 
         .button-container {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         .button-link {
@@ -32,13 +44,39 @@
             background-color: #ecf0f1;
             padding: 8px 16px;
             border-radius: 5px;
-            margin-right: 10px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        form label, form select {
+            font-size: 14px;
+            padding: 6px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
 
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
+            margin-top: 20px;
         }
 
         .calendar-day-header {
@@ -53,7 +91,7 @@
             background-color: white;
             border: 1px solid #ccc;
             padding: 10px;
-            min-height: 80px;
+            min-height: 100px;
         }
 
         .calendar-day-content {
@@ -70,21 +108,43 @@
 </head>
 <body>
 <header>
-    <h1>売上データ一覧</h1>
+    売上データ一覧
 </header>
 
 <div class="container">
+    <!-- ナビゲーション -->
     <div class="button-container">
         <a href="/main" class="button-link">メインページに戻る</a>
-        <a href="/sales_change" class="button-link">過去データの修正</a>
+        <a th:href="@{/sales_change_all(year=${year}, month=${month})}" class="button-link">過去データの修正</a>
     </div>
 
+    <!-- 年月選択フォーム -->
+    <form action="/sales_change_all" method="get">
+        <label for="year">年:</label>
+        <select name="year" id="year">
+            <option th:selected="${year == 2024}" value="2024">2024</option>
+            <option th:selected="${year == 2025}" value="2025">2025</option>
+        </select>
+        
+        <label for="month">月:</label>
+        <select name="month" id="month">
+            <option th:each="m : ${#numbers.sequence(1, 12)}"
+                    th:value="${m}"
+                    th:text="${m + '月'}"
+                    th:selected="${m == month}">1月</option>
+        </select>
+        
+        <button type="submit">表示</button>
+    </form>
+
+    <!-- メッセージ表示 -->
     <div th:if="${message != null}">
         <p th:text="${message}"></p>
     </div>
 
-    <div th:if="${salesList != null}" class="calendar">
-        <!-- Calendar Header -->
+    <!-- カレンダー表示 -->
+    <div th:if="${dailySummary != null}" class="calendar">
+        <!-- 曜日ヘッダー -->
         <div class="calendar-day-header">日</div>
         <div class="calendar-day-header">月</div>
         <div class="calendar-day-header">火</div>
@@ -93,12 +153,24 @@
         <div class="calendar-day-header">金</div>
         <div class="calendar-day-header">土</div>
 
-        <!-- Sales Data -->
-        <div th:each="data : ${salesList}" class="calendar-day">
+        <!-- 各日のデータ -->
+        <div th:each="entry : ${dailySummary}" class="calendar-day">
             <div class="calendar-day-content">
-                <p th:text="${#temporals.format(data.saleDay, 'MM/dd')}"></p>
-                <p th:text="${data.totalSalesYen != null ? #numbers.formatInteger(data.totalSalesYen, 0, 'COMMA') + ' 円' : '0 円'}"></p>
-                <p th:text="${data.totalCups != null ? data.totalCups : '0'}"></p>
+                <!-- 日付 -->
+                <p th:text="${#temporals.format(entry.key, 'MM/dd')}">日付</p>
+
+                <!-- ビール別データ（必要なら表示） -->
+                <!--
+                <div th:each="beerEntry : ${entry.value.beerData}">
+                    <p th:text="${beerEntry.key}">ビール名</p>
+                    <p th:text="'本数: ' + ${beerEntry.value.bottles} + '本'"></p>
+                    <p th:text="'金額: ' + ${#numbers.formatInteger(beerEntry.value.amount, 0, 'COMMA')} + ' 円'"></p>
+                </div>
+                -->
+
+                <!-- 合計 -->
+                <p th:text="'合計本数: ' + ${entry.value.totalBottles} + '本'">合計本数</p>
+                <p th:text="'合計金額: ' + ${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + ' 円'">合計金額</p>
             </div>
         </div>
     </div>

@@ -231,13 +231,13 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     public String startForUsers() {
         return "PerformanceViewForUsers.html";
     }
-
+/* 
     @GetMapping("/Performance/Input")
     public String input(Model model) {
         model.addAttribute("salesData", new SalesData());
         return "Input";
     }
-
+*/
     @GetMapping("/sales_input")
     public String sales_inputPage() {
         return "sales_input";

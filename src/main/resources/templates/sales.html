@@ -115,11 +115,11 @@
     <!-- ナビゲーション -->
     <div class="button-container">
         <a href="/main" class="button-link">メインページに戻る</a>
-        <a th:href="@{/sales_change_all(year=${year}, month=${month})}" class="button-link">過去データの修正</a>
+        <a th:href="@{/sales_change(year=${year}, month=${month})}" class="button-link">過去データの修正</a>
     </div>
 
     <!-- 年月選択フォーム -->
-    <form action="/sales_change_all" method="get">
+    <form action="/sales" method="get">
         <label for="year">年:</label>
         <select name="year" id="year">
             <option th:selected="${year == 2024}" value="2024">2024</option>
@@ -136,6 +136,7 @@
         
         <button type="submit">表示</button>
     </form>
+
 
     <!-- メッセージ表示 -->
     <div th:if="${message != null}">

@@ -2,33 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>予測結果</title>
+    <title>一週間分の販売予測</title>
+    <style>
+        .forecast-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .forecast-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 250px;
+            min-width: 200px;
+            background-color: #f9f9f9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+
+        th, td {
+            border: 1px solid #aaa;
+            padding: 4px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>一週間分の販売予測</h1>
+<h1>一週間分の販売予測</h1>
 
-    <div>
+<div class="forecast-container">
+    <div class="forecast-box" th:each="forecast : ${forecastList}">
         <p><strong>日付:</strong> <span th:text="${forecast.date}"></span></p>
         <p><strong>曜日:</strong> <span th:text="${forecast.dayOfWeek}"></span></p>
         <p><strong>天気:</strong> <span th:text="${forecast.weather}"></span></p>
         <p><strong>気温:</strong> <span th:text="${forecast.temperature} + '℃'"></span></p>
         <p><strong>予約数:</strong> <span th:text="${forecast.reservationCount} + ' 人'"></span></p>
-    </div>
 
-    <h2>商品ごとの需要予測</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>商品名</th>
-                <th>予測本数</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="entry : ${forecast.predictedItems}">
-                <td th:text="${entry.key}"></td>
-                <td th:text="${entry.value} + ' 本'"></td>
-            </tr>
-        </tbody>
-    </table>
+        <h4>需要予測</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>本数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry : ${forecast.predictedItems}">
+                    <td th:text="${entry.key}"></td>
+                    <td th:text="${entry.value} + ' 本'"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 </body>
 </html>

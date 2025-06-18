@@ -89,10 +89,10 @@ public class MessageController {
     // }
     
 
-    @GetMapping("/demand")
-    public String demandPage() {
-        return "demand";
-    }
+    // @GetMapping("/demand")
+    // public String demandPage() {
+    //     return "demand";
+    // }
 
     @GetMapping("/forecast")
     public String forecastPage() {

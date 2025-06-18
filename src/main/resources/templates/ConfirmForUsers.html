@@ -13,7 +13,7 @@
 <div class="container">
     <p>入力内容をご確認の上、「確定」ボタンを押してください。</p>
 
-    <form th:action="@{/Performance/CompleteForUsers}" th:object="${salesData}" method="post">
+    <form th:action="@{/Performance/CompleteForUsers}" th:object="${salesData}" method="get">
 
         <table class="confirm-table">
             <tr><td>ホワイトビール：</td><td th:text="*{whiteBeerBottles}"></td></tr>

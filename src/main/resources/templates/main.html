@@ -12,35 +12,17 @@
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-        .main-wrapper {
-            max-width: 500px;
-            margin: 60px auto;
-            padding: 30px 30px 60px 30px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         .main-wrapper h1 {
             font-size: 28px;
-        }
-        .main-wrapper h1 {
-            font-size: 28px;
             margin-bottom: 40px;
             color: #2c3e50;
-            color: #2c3e50;
-        }
-        .vertical-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
         }
 
-        .vertical-buttons form {
-            width: 100%;
+        .vertical-buttons {
+            display: flex;
             flex-direction: column;
             gap: 15px;
             align-items: center;
@@ -55,14 +37,14 @@
 <header>
     <h1>メインページ</h1>
 </header>
+
 <div class="main-wrapper">
     <h1>機能選択</h1>
     <div class="vertical-buttons">
         <form action="/Performance/PerformanceView" method="get">
             <input type="submit" value="販売予測">
         </form>
-        <!-- APIができたら「csv-」を消す -->
-        <form action="/csv-forecast" method="get"> 
+        <form action="/demand" method="get">
             <input type="submit" value="需要予測">
         </form>
         <form action="/brands" method="get">

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.message.model.CsvForecastRecord;
 import com.example.message.service.CsvForecastService;
-
+import com.example.message.entity.SalesData;
 import java.util.List;
 
 @Controller
@@ -148,6 +148,12 @@ public class MessageController {
     @RequestMapping("/Performance/PerformanceViewForUsers")
     public String startForUsers() {
         return "PerformanceViewForUsers.html";
+    }
+
+    @GetMapping("/Performance/Input")
+    public String input(Model model) {
+        model.addAttribute("salesData", new SalesData());
+        return "Input";
     }
 
     @GetMapping("/sales_input")

@@ -5,6 +5,7 @@ import com.example.message.service.PerformanceService;
 import com.example.message.util.ConfirmViewHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +24,14 @@ public class PerformanceController {
     private ConfirmViewHelper confirmViewHelper;
 
 
-    @RequestMapping("/Performance/Input")
-    public String input(Model model) {
-        model.addAttribute("salesData", new SalesData());
-        return "Input.html";
-    }
+    // @RequestMapping("/Performance/Input")
+    // public String input(Model model) {
+    //     model.addAttribute("salesData", new SalesData());
+    //     return "Input.html";
+    // }
 
     
-    @RequestMapping("/Performance/InputForUsers")
+    @GetMapping("/Performance/InputForUsers")
     public String inputForUsers(Model model) {
         model.addAttribute("salesData", new SalesData());
         return "InputForUsers.html";

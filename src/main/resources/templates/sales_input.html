@@ -2,10 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>販売本数の入力</title>
+    <title>銘柄追加</title>
 </head>
 <body>
-    <h1>販売本数の入力</h1>
-    <a href="/sales"><button>確認ページ</button></a>
+    <h1>おつかれい</h1>
+    <a href="/main"><button>メインページに戻る</button></a>
 </body>
 </html>
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>販売実績入力</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .input-table {
+            width: 100%;
+            margin-top: 50px;
+            table-layout: fixed;
+        }
+
+        .input-table th, .input-table td {
+            text-align: center;
+            padding: 10px;
+            width: 33.3%;
+        }
+
+        .input-table input[type="number"] {
+            width: 60px;
+            margin: 0 auto;
+        }
+
+        .button-center {
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>販売実績入力</h1>
+</header>
+<div class="container">
+    <form th:action="@{/Performance/Confirm}" th:object="${salesData}" method="post">
+        <table class="input-table">
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>値段</th>
+                    <th>数量</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ホワイトビール</td>
+                    <td>900円</td>
+                    <td><input type="number" th:field="*{whiteBeerBottles}" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <td>ラガー</td>
+                    <td>800円</td>
+                    <td><input type="number" th:field="*{lagerBottles}" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <td>ペールエール</td>
+                    <td>1000円</td>
+                    <td><input type="number" th:field="*{paleAleBottles}" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <td>フルーツビール</td>
+                    <td>1000円</td>
+                    <td><input type="number" th:field="*{fruitBeerBottles}" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <td>黒ビール</td>
+                    <td>1200円</td>
+                    <td><input type="number" th:field="*{blackBeerBottles}" min="0" max="100"></td>
+                </tr>
+                <tr>
+                    <td>IPA</td>
+                    <td>900円</td>
+                    <td><input type="number" th:field="*{ipaBottles}" min="0" max="100"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="button-center">
+            <input type="submit" value="送信">
+        </div>
+    </form>
+</div>
+</body>
+</html> -->

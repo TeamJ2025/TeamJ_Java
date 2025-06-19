@@ -51,7 +51,7 @@
         
         th, td {
             padding: 12px;
-            text-align: center;
+            text-align: left;
             border-bottom: 1px solid #eee;
             width: 50%;
         }
@@ -74,8 +74,7 @@
 </header>
 
 <main>
-    <ul>
-        <li th:each="msg : ${messages}">
+        <ul th:each="msg : ${messages}">
             <span th:text="${msg.name}">名前</span>:
             <span th:text="${msg.email}">メールアドレス</span>
             <!-- 削除ボタン（formでPOST送信） -->
@@ -83,8 +82,8 @@
                 <input type="hidden" name="id" th:value="${msg.id}" />
                 <input type="submit" value="削除" onclick="return confirm('本当に削除しますか？');" />
             </form>
-        </li>
-    </ul>
+        </ul>
+
     <a href="/main"><button>メインページに戻る</button></a>
 </main>
 </body>

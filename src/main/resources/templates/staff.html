@@ -3,6 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <title>ログイン成功</title>
+    <style>
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        main {
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        button {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            width: 50%;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
 
@@ -11,12 +67,12 @@
 </header>
 
 <main>
-    <ul>
-        <li th:each="msg : ${messages}">
+    
+    <ul th:each="msg : ${messages}">
             <strong th:text="${msg.name}">名前</strong>:
             <strong th:text="${msg.email}">メールアドレス</strong>:
-        </li>
     </ul>
+
     <a href="/main"><button>メインページに戻る</button></a>
     <a href="/staff_change"><button>スタッフを修正する</button></a>
 </main>

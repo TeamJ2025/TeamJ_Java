@@ -18,14 +18,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class ForecastService {
 
+    @Value("${forecast.api.url}")
+    private String apiUrl;
+
+    @Value("${forecast.api.key}")
+    private String apiKey;
+
     public List<Map<String, Object>> fetchForecast() {
         try {
-            String urlString = "https://teamj-app.azurewebsites.net/api/http_trigger_teamJ?code=XASwEES2B5ywQ8GKr_D7uu7zUFU21IeQQ-2ry12NsxaLAzFugWiJrA==";
-            URL url = new URL(urlString);
+            String fullUrl = apiUrl + "?code=" + apiKey;
+            URL url = new URL(fullUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");

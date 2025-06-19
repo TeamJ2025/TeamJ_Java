@@ -2,42 +2,109 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>全ての売上データ修正</title>
+    <title>売上データ修正</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- 共通CSS -->
+    <style>
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        a.button, button {
+            width: 250px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
+
 <header>
-    <h1>全ての売上データ修正</h1>
+    <h1>売上データ修正</h1>
 </header>
 
 <div class="container">
+
+    <div class="button-container">
+        <a th:href="@{/sales(year=${year}, month=${month})}" class="button">売上一覧に戻る</a>
+    </div>
+
     <form action="/sales_change" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" name="year" th:value="${year}" />
         <input type="hidden" name="month" th:value="${month}" />
 
-        <table>
-            <thead>
-                <tr>
-                    <th>日付</th>
-                    <th>売上合計（円）</th>
-                    <th>総杯数</th>
-                    <th>予約件数</th>
-                    <th>予約人数</th>
-                    <!-- 必要なカラムを追加 -->
-                    <th>修正</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="salesData : ${salesList}">
-                    <td th:text="${salesData.saleDay}"></td>
-                    <td><input type="number" name="totalSalesYen" th:value="${salesData.totalSalesYen}" /></td>
-                    <td><input type="number" name="totalCups" th:value="${salesData.totalCups}" /></td>
-                    <td><input type="number" name="reservationCount" th:value="${salesData.reservationCount}" /></td>
-                    <td><input type="number" name="reservationPeople" th:value="${salesData.reservationPeople}" /></td>
-                    <td><button type="submit">修正保存</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th th:each="beer : ${beerList}" th:text="${beer.beerName}">ビール名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${dailySummary}">
+                        <td th:text="${#temporals.format(entry.key, 'MM/dd')}">04/01</td>
+                        <td th:each="beer : ${beerList}">
+                            <input type="number"
+                                   th:name="${beer.beerName} + '__' + ${entry.key}"
+                                   th:value="${entry.value[beer.beerName]?.bottles}"
+                                   min="0" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-container">
+            <button type="submit">保存</button>
+        </div>
     </form>
+
 </div>
 
 </body>

@@ -1,6 +1,8 @@
 package com.example.message.controller;
 
-import com.example.message.entity.SalesData;
+// 一時的にコメントアウト
+/* 
+// import com.example.message.entity.SalesData;
 import com.example.message.service.PerformanceService;
 import com.example.message.util.ConfirmViewHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,3 +78,4 @@ public class PerformanceController {
         return "CompleteForUsers.html";
     }
 }
+*/

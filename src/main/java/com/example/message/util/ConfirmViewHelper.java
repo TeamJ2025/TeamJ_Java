@@ -1,5 +1,7 @@
 package com.example.message.util;
 
+// 一時的にコメントアウト（SalesData エンティティが無効化されているため）
+/*
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,3 +38,4 @@ public class ConfirmViewHelper {
         mv.addObject("salesData", salesData);  // HTMLに渡す用
     }
 }
+ */

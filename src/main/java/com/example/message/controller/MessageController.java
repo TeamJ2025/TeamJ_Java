@@ -1,37 +1,51 @@
 package com.example.message.controller;
 
-import com.example.message.service.MessageService;
-import com.example.message.model.Message;
-import com.example.message.repository.MessageRepository;
-import com.example.message.service.SalesDataService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import com.example.message.model.ForecastResult;
-import com.example.message.service.ForecastService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.message.model.CsvForecastRecord;
-import com.example.message.service.CsvForecastService;
+import com.example.message.entity.Sales;
 import com.example.message.entity.SalesData;
-import java.util.List;
-
 import com.example.message.model.ForecastResult;
+import com.example.message.model.Message;
+import com.example.message.repository.MessageRepository;
 import com.example.message.service.ForecastService;
-
+import com.example.message.service.MessageService;
+import com.example.message.service.SalesDataService;
+import com.example.message.service.SalesService;
 
 @Controller
 public class MessageController {
+
     private final MessageService service;
     private final MessageRepository repository;
+    private final SalesService salesService;  // ★ final を付ける
+    private final SalesDataService salesDataService;
 
-    public MessageController(MessageService service, MessageRepository repository){
-        this.service =service;
+    public MessageController(MessageService service,
+                             MessageRepository repository,
+                             SalesService salesService,
+                             SalesDataService salesDataService) {
+        this.service = service;
         this.repository = repository;
+        this.salesService = salesService;  // ★ ここで注入される
+        this.salesDataService = salesDataService;
     }
+
 
     @GetMapping("/")
     public String index() {
@@ -130,12 +144,56 @@ public class MessageController {
 
     private ForecastService forecastService;
     // APIができたら復活　csv-forecastをコメントアウト
-    @GetMapping("/forecast")
-    public String getForecast(Model model) {
-        ForecastResult result = forecastService.fetchForecast();
-        model.addAttribute("forecast", result);
-        return "forecast";
-    }
+    // @GetMapping("/forecast")
+    // public String getForecast(Model model) {
+    //     ForecastResult result = forecastService.fetchForecast();
+    //     model.addAttribute("forecast", result);
+    //     return "forecast";
+    // }
+
+@GetMapping("/forecast")
+public String getWeeklyForecast(Model model) {
+    List<ForecastResult> weekForecast = new ArrayList<>();
+
+    weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
+        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+
+    model.addAttribute("forecastList", weekForecast);
+    return "forecast";
+}
+
+private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
+    ForecastResult f = new ForecastResult();
+    f.setDate(date);
+    f.setDayOfWeek(day);
+    f.setWeather(weather);
+    f.setTemperature(temp);
+    f.setReservationCount(resCount);
+    f.setPredictedItems(items);
+    return f;
+}
+
     // private CsvForecastService csvForecastService;
     // @GetMapping("/csv-forecast")
     // public String showForecastFromCsv(Model model) {
@@ -190,6 +248,36 @@ public class MessageController {
         return "Input";
     }
 
+    @PostMapping("/Performance/Confirm")
+    public String submitSalesData(
+            @RequestParam("salesDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate salesDate,
+            @RequestParam(value = "whiteBeerBottles", required = false) Integer white,
+            @RequestParam(value = "lagerBottles", required = false) Integer lager,
+            @RequestParam(value = "paleAleBottles", required = false) Integer pale,
+            @RequestParam(value = "fruitBeerBottles", required = false) Integer fruit,
+            @RequestParam(value = "blackBeerBottles", required = false) Integer black,
+            @RequestParam(value = "ipaBottles", required = false) Integer ipa
+    ) {
+        int userId = 1; // 仮設定。ログイン中のユーザーに変更可能
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Sales> salesList = new ArrayList<>();
+        if (white != null && white > 0) salesList.add(new Sales(salesDate, userId, 1, white));
+        if (lager != null && lager > 0) salesList.add(new Sales(salesDate, userId, 2, lager));
+        if (pale != null && pale > 0)  salesList.add(new Sales(salesDate, userId, 3, pale));
+        if (fruit != null && fruit > 0) salesList.add(new Sales(salesDate, userId, 4, fruit));
+        if (black != null && black > 0) salesList.add(new Sales(salesDate, userId, 5, black));
+        if (ipa != null && ipa > 0)    salesList.add(new Sales(salesDate, userId, 6, ipa));
+
+        for (Sales sale : salesList) {
+            sale.setCreatedAt(now);
+            sale.setUpdatedAt(now);
+        }
+
+        salesService.saveAll(salesList);
+        return "redirect:/Performance/Input?success";
+    }
+
     @GetMapping("/sales_input")
     public String sales_inputPage() {
         return "sales_input";
@@ -199,6 +287,87 @@ public class MessageController {
     // public String sales_changePage() {
     //     return "sales_change";
     // }
+    
+
+    @GetMapping("/sales_change")
+    public String showSalesChangePage(@RequestParam int year, @RequestParam int month, Model model) {
+        List<Sales> allSales = salesDataService.getAllSalesData();
+
+        // 指定年月でフィルタ
+        List<Sales> filtered = allSales.stream()
+                .filter(s -> {
+                    LocalDate date = s.getSalesDate();
+                    return date.getYear() == year && date.getMonthValue() == month;
+                })
+                .toList();
+
+        // 修正ポイント：戻り値の型と一致させる
+        Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
+
+        model.addAttribute("dailySummary", dailySummary);
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+        model.addAttribute("beerList", salesDataService.getAllBeers()); // ビール一覧（列ヘッダーに使う）
+
+        return "sales_change";
+    }
+
+
+    @GetMapping("/message/sales_view") // 例：メッセージ画面から売上を見るとき
+    public String showSalesDataInMessage(Model model) {
+        List<Sales> salesList = salesDataService.getAllSalesData();
+
+        // 修正：戻り値型を正しく合わせる
+        Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(salesList);
+
+        model.addAttribute("dailySummary", dailySummary);
+        model.addAttribute("year", 2025);
+        model.addAttribute("month", 6);
+        model.addAttribute("beerList", salesDataService.getAllBeers()); // 必要ならこれも追加
+
+        return "sales"; // templates/sales.html を表示
+    }
+
+
+    private Map<LocalDate, Map<String, Map<String, Integer>>> createDailySummary(List<Sales> salesList) {
+        return salesList.stream()
+            .collect(Collectors.groupingBy(Sales::getSalesDate)) // 日付ごとにまとめる
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toMap(
+                Map.Entry::getKey, // 日付
+                entry -> {
+                    List<Sales> salesForDate = entry.getValue();
+                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
+
+                    for (Sales sale : salesForDate) {
+                        String beerName = sale.getBeer().getBeerName();
+                        int bottles = sale.getSoldBottles();
+                        int amount = bottles * sale.getBeer().getPrice();
+
+                        beerData.merge(
+                            beerName,
+                            new HashMap<>(Map.of("bottles", bottles, "amount", amount)),
+                            (existing, newEntry) -> {
+                                int updatedBottles = existing.getOrDefault("bottles", 0) + newEntry.getOrDefault("bottles", 0);
+                                int updatedAmount = existing.getOrDefault("amount", 0) + newEntry.getOrDefault("amount", 0);
+                                existing.put("bottles", updatedBottles);
+                                existing.put("amount", updatedAmount);
+                                return existing;
+                            }
+                        );
+                    }
+
+                    return beerData;
+                },
+                (a, b) -> a,
+                LinkedHashMap::new
+            ));
+    }
+
+
+
 
     // スタッフ修正ページ表示
     @GetMapping("/staff_change")
@@ -213,5 +382,43 @@ public class MessageController {
         repository.deleteById(id);
         return "redirect:/staff_change"; // 削除後に再読み込み
     }
+
+    @PostMapping("/sales_change")
+    public String updateSalesData(@RequestParam Map<String, String> allParams) {
+        List<Sales> updatedSalesList = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : allParams.entrySet()) {
+            String key = entry.getKey(); // totalBottles__2024-07-01 など
+            String value = entry.getValue();
+
+            if (!key.contains("__")) continue;
+
+            try {
+                String[] parts = key.split("__");
+                if (parts.length != 2) continue;
+
+                String beerName = parts[0];
+                LocalDate date = LocalDate.parse(parts[1]);
+                int bottles = Integer.parseInt(value);
+
+                // 日付・ビール名で該当するSalesを取得
+                List<Sales> salesList = salesDataService.getSalesByDate(date).stream()
+                    .filter(s -> s.getBeer().getBeerName().equals(beerName))
+                    .toList();
+
+                for (Sales sale : salesList) {
+                    sale.setSoldBottles(bottles);
+                    sale.setUpdatedAt(LocalDateTime.now());
+                    updatedSalesList.add(sale);
+                }
+            } catch (Exception e) {
+                System.err.println("変換エラー: " + key + " = " + value);
+            }
+        }
+
+        salesService.saveAll(updatedSalesList);
+        return "redirect:/sales"; // 保存完了後に sales 一覧ページへ
+    }
+
 
 }

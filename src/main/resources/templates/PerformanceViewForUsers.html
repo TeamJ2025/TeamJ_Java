@@ -10,8 +10,15 @@
     <h1>販売実績メニュー</h1>
 </header>
 <div class="container center">
-    <form action="/Performance/InputForUsers" method="get">
+    <!-- <form action="/Performance/InputForUsers" method="get">
         <input type="submit" value="販売実績入力">
+    </form> -->
+        <form action="/Performance/Input" method="get">
+        <input type="submit" value="販売実績入力">
+    </form>
+    <form action="/sales" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="submit" value="販売実績一覧">
     </form>
 </div>
 </body>

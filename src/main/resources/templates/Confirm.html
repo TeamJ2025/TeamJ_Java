@@ -33,31 +33,24 @@
         入力内容をご確認の上、「確定」ボタンを押してください。
     </p>
 
-    <form th:action="@{/Performance/Complete}" th:object="${salesData}" method="post">
-
+    <form th:action="@{/Performance/Complete}" method="post">
         <table class="confirm-table">
-            <tr><td>ホワイトビール：</td><td th:text="*{whiteBeerBottles}"></td></tr>
-            <tr><td>ラガー：</td><td th:text="*{lagerBottles}"></td></tr>
-            <tr><td>ペールエール：</td><td th:text="*{paleAleBottles}"></td></tr>
-            <tr><td>フルーツビール：</td><td th:text="*{fruitBeerBottles}"></td></tr>
-            <tr><td>黒ビール：</td><td th:text="*{blackBeerBottles}"></td></tr>
-            <tr><td>IPA：</td><td th:text="*{ipaBottles}"></td></tr>
+            <tr th:each="entry, iterStat : ${confirmList}">
+                <td th:text="${entry.beer.beerName} + '：'"></td>
+                <td th:text="${entry.soldBottles} + ' 本'"></td>
+                <!-- hidden送信用 -->
+                <input type="hidden" name="beerIds" th:value="${entry.beersId}" />
+                <input type="hidden" name="quantities" th:value="${entry.soldBottles}" />
+            </tr>
             <tr>
                 <td><strong>総杯数：</strong></td>
-                <td><strong th:text="${total_cups}"></strong></td>
+                <td><strong th:text="${totalCups} + ' 杯'"></strong></td>
             </tr>
             <tr>
                 <td><strong>合計金額：</strong></td>
-                <td><strong th:text="${total_sales_yen} + ' 円'"></strong></td>
+                <td><strong th:text="${totalSalesYen} + ' 円'"></strong></td>
             </tr>
         </table>
-
-        <input type="hidden" th:field="*{whiteBeerBottles}" />
-        <input type="hidden" th:field="*{lagerBottles}" />
-        <input type="hidden" th:field="*{paleAleBottles}" />
-        <input type="hidden" th:field="*{fruitBeerBottles}" />
-        <input type="hidden" th:field="*{blackBeerBottles}" />
-        <input type="hidden" th:field="*{ipaBottles}" />
 
         <div class="form-center">
             <input type="submit" value="確定">

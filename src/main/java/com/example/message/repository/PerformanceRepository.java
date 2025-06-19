@@ -1,4 +1,4 @@
-package com.example.message.repository;
+// package com.example.message.repository;
 
 //一時的にコメントアウト
 

@@ -13,15 +13,24 @@ import com.example.message.model.ForecastResult;
 import com.example.message.service.ForecastService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.example.message.model.CsvForecastRecord;
 import com.example.message.service.CsvForecastService;
+import com.example.message.entity.Sales;
 import com.example.message.entity.SalesData;
 import java.util.List;
+
+import com.example.message.service.SalesService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 //需要予測用
 import com.example.message.model.ForecastResult;
 import com.example.message.service.ForecastService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 //需要予測、ダミーデータを使った挙動確認用
 import java.util.HashMap;
@@ -29,13 +38,19 @@ import java.util.Map;
 
 @Controller
 public class MessageController {
+
     private final MessageService service;
     private final MessageRepository repository;
+    private final SalesService salesService;  // ★ final を付ける
 
-    public MessageController(MessageService service, MessageRepository repository){
-        this.service =service;
+    public MessageController(MessageService service,
+                             MessageRepository repository,
+                             SalesService salesService) {
+        this.service = service;
         this.repository = repository;
+        this.salesService = salesService;  // ★ ここで注入される
     }
+
 
     @GetMapping("/")
     public String index() {
@@ -231,13 +246,43 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     public String startForUsers() {
         return "PerformanceViewForUsers.html";
     }
-/* 
+
     @GetMapping("/Performance/Input")
     public String input(Model model) {
         model.addAttribute("salesData", new SalesData());
         return "Input";
     }
-*/
+
+    @PostMapping("/Performance/Confirm")
+    public String submitSalesData(
+            @RequestParam("salesDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate salesDate,
+            @RequestParam(value = "whiteBeerBottles", required = false) Integer white,
+            @RequestParam(value = "lagerBottles", required = false) Integer lager,
+            @RequestParam(value = "paleAleBottles", required = false) Integer pale,
+            @RequestParam(value = "fruitBeerBottles", required = false) Integer fruit,
+            @RequestParam(value = "blackBeerBottles", required = false) Integer black,
+            @RequestParam(value = "ipaBottles", required = false) Integer ipa
+    ) {
+        int userId = 1; // 仮設定。ログイン中のユーザーに変更可能
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Sales> salesList = new ArrayList<>();
+        if (white != null && white > 0) salesList.add(new Sales(salesDate, userId, 1, white));
+        if (lager != null && lager > 0) salesList.add(new Sales(salesDate, userId, 2, lager));
+        if (pale != null && pale > 0)  salesList.add(new Sales(salesDate, userId, 3, pale));
+        if (fruit != null && fruit > 0) salesList.add(new Sales(salesDate, userId, 4, fruit));
+        if (black != null && black > 0) salesList.add(new Sales(salesDate, userId, 5, black));
+        if (ipa != null && ipa > 0)    salesList.add(new Sales(salesDate, userId, 6, ipa));
+
+        for (Sales sale : salesList) {
+            sale.setCreatedAt(now);
+            sale.setUpdatedAt(now);
+        }
+
+        salesService.saveAll(salesList);
+        return "redirect:/Performance/Input?success";
+    }
+
     @GetMapping("/sales_input")
     public String sales_inputPage() {
         return "sales_input";

@@ -39,10 +39,27 @@
 </header>
 
 <div class="main-wrapper">
-    <h1>機能選択</h1>
+    <!-- <h1>機能選択</h1>
     <div class="vertical-buttons">
         <form action="/Performance/Input" method="get">
             <input type="submit" value="販売実績入力">
+        </form> -->
+
+            <h1>機能選択</h1>
+    <div class="vertical-buttons">
+        <!-- 販売実績入力 -->
+        <form action="/Performance/Input" method="get">
+            <input type="submit" value="販売実績入力">
+        </form>
+        
+        <!-- 販売実績一覧閲覧 -->
+        <form action="/salesforusers" method="get">
+            <input type="submit" value="販売実績一覧">
+        </form>
+        
+        <!-- 需要予測閲覧 -->
+        <form action="/forecast" method="get">
+            <input type="submit" value="需要予測">
         </form>
 
     </div>

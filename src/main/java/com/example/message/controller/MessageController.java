@@ -160,27 +160,27 @@ public class MessageController {
 public String getWeeklyForecast(Model model) {
     List<ForecastResult> weekForecast = new ArrayList<>();
 
-    weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ","01d", 22.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "火曜日","晴れ", "02d", 19.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "水曜日","晴れ", "01d", 22.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ","03d", 22.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "金曜日","晴れ", "03d", 22.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
+    weekForecast.add(createDummy("2025-06-16", "土曜日","晴れ", "01d", 22.0, 10, Map.of(
         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
@@ -188,7 +188,7 @@ public String getWeeklyForecast(Model model) {
     return "forecast";
 }
 
-private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
+private ForecastResult createDummy(String date, String day, String weather, String iconCode, double temp, int resCount, Map<String, Integer> items) {
     ForecastResult f = new ForecastResult();
     f.setDate(date);
     f.setDayOfWeek(day);
@@ -196,6 +196,7 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     f.setTemperature(temp);
     f.setReservationCount(resCount);
     f.setPredictedItems(items);
+    f.setIconCode(iconCode);
     return f;
 }
 

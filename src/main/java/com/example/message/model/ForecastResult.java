@@ -21,6 +21,8 @@ public class ForecastResult {
     @JsonProperty("prediction")
     private Map<String, Integer> predictedItems;
 
+    private String iconCode;
+
     // --- Getter & Setter ---
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
@@ -39,4 +41,7 @@ public class ForecastResult {
 
     public Map<String, Integer> getPredictedItems() { return predictedItems; }
     public void setPredictedItems(Map<String, Integer> predictedItems) { this.predictedItems = predictedItems; }
+
+    public String getIconCode() { return iconCode; }
+    public void setIconCode(String iconCode) { this.iconCode = iconCode;}
 }

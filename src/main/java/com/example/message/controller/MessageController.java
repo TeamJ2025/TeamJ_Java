@@ -225,6 +225,7 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     public String mainPage() {
         return "main";
     }
+
     @GetMapping("/main_user")
     public String mainUserPage() {
         return "main_user";
@@ -323,16 +324,34 @@ private ForecastResult createDummy(String date, String day, String weather, doub
 
     @PostMapping("/Performance/Complete")
     public String completeSales(
-            @ModelAttribute("salesList") List<Sales> salesList
+            @RequestParam("beerIds") List<Integer> beerIds,
+            @RequestParam("quantities") List<Integer> quantities
     ) {
+        int userId = 1; // 仮ユーザーID
+        LocalDate salesDate = LocalDate.now(); // 日付が必要なら別で渡してもOK！
         LocalDateTime now = LocalDateTime.now();
-        for (Sales sale : salesList) {
-            sale.setCreatedAt(now);
-            sale.setUpdatedAt(now);
+
+        List<Sales> salesList = new ArrayList<>();
+
+        for (int i = 0; i < beerIds.size(); i++) {
+            Integer beerId = beerIds.get(i);
+            Integer quantity = quantities.get(i);
+
+            if (quantity != null && quantity > 0) {
+                Sales sale = new Sales();
+                sale.setSalesDate(salesDate);
+                sale.setUsersId(userId);
+                sale.setBeersId(beerId);
+                sale.setSoldBottles(quantity);
+                sale.setCreatedAt(now);
+                sale.setUpdatedAt(now);
+                salesList.add(sale);
+            }
         }
+
         salesService.saveAll(salesList);
         return "redirect:/main";
-    }    
+    }
     
     @Autowired
     private BeerRepository beerRepository;

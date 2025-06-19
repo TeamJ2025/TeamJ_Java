@@ -36,13 +36,12 @@
     <form th:action="@{/Performance/Complete}" method="post">
         <table class="confirm-table">
             <tr th:each="entry, iterStat : ${confirmList}">
-                <td th:text="${entry.beerName} + '：'"></td>
-                <td th:text="${entry.quantity} + ' 本'"></td>
+                <td th:text="${entry.beer.beerName} + '：'"></td>
+                <td th:text="${entry.soldBottles} + ' 本'"></td>
                 <!-- hidden送信用 -->
-                <input type="hidden" name="beerIds" th:value="${entry.beerId}" />
-                <input type="hidden" name="quantities" th:value="${entry.quantity}" />
+                <input type="hidden" name="beerIds" th:value="${entry.beersId}" />
+                <input type="hidden" name="quantities" th:value="${entry.soldBottles}" />
             </tr>
-
             <tr>
                 <td><strong>総杯数：</strong></td>
                 <td><strong th:text="${totalCups} + ' 杯'"></strong></td>

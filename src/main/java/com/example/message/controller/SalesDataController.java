@@ -54,8 +54,10 @@ public class SalesDataController {
 */
 
 import com.example.message.entity.Sales;
-import com.example.message.entity.SalesData;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
+import com.example.message.service.SalesService;
 
 @Controller
 public class SalesDataController {

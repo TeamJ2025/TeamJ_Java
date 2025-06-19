@@ -1,54 +1,57 @@
 package com.example.message.controller;
 
-import com.example.message.service.MessageService;
-import com.example.message.model.Message;
-import com.example.message.repository.MessageRepository;
-import com.example.message.service.SalesDataService;
-
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import com.example.message.model.ForecastResult;
-import com.example.message.service.ForecastService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.example.message.model.CsvForecastRecord;
-import com.example.message.service.CsvForecastService;
-import com.example.message.entity.Sales;
-import com.example.message.entity.SalesData;
-import java.util.List;
-
-import com.example.message.service.SalesService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-//需要予測用
-import com.example.message.model.ForecastResult;
-import com.example.message.service.ForecastService;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-//需要予測、ダミーデータを使った挙動確認用
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.message.entity.Sales;
+import com.example.message.entity.SalesData;
+import com.example.message.model.ForecastResult;
+import com.example.message.model.Message;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.ForecastService;
+import com.example.message.service.MessageService;
+import com.example.message.service.SalesDataService;
+import com.example.message.service.SalesService;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
+import com.example.message.service.SalesDataService;
+import com.example.message.entity.Sales;
 
 @Controller
 public class MessageController {
 
     private final MessageService service;
     private final MessageRepository repository;
-    private final SalesService salesService;  // ★ final を付ける
+    private final SalesService salesService;
+    private final SalesDataService salesDataService;
 
     public MessageController(MessageService service,
-                             MessageRepository repository,
-                             SalesService salesService) {
+                            MessageRepository repository,
+                            SalesService salesService,
+                            SalesDataService salesDataService) {
         this.service = service;
         this.repository = repository;
-        this.salesService = salesService;  // ★ ここで注入される
+        this.salesService = salesService;
+        this.salesDataService = salesDataService;
     }
 
 
@@ -66,9 +69,9 @@ public class MessageController {
 
     @PostMapping("/register")
     public String register(@RequestParam String name,
-                           @RequestParam String email,
-                           @RequestParam String password,
-                           Model model) {
+                            @RequestParam String email,
+                            @RequestParam String password,
+                            Model model) {
         if(name.isBlank() || email.isBlank()|| password.isBlank()){
             model.addAttribute("error", "両方入力してください");
             return "register"; 
@@ -84,6 +87,7 @@ public class MessageController {
     public String loginPage() {
         return "login";
     }
+    
     // @PostMapping("/login")
     // public String login(@RequestParam String email,
     //                     @RequestParam String password,
@@ -146,8 +150,8 @@ public class MessageController {
     // }
 
     @Autowired
-
     private ForecastService forecastService;
+    
     // APIができたら復活　csv-forecastをコメントアウト
     // @GetMapping("/forecast")
     // public String getForecast(Model model) {
@@ -156,48 +160,48 @@ public class MessageController {
     //     return "forecast";
     // }
 
-@GetMapping("/forecast")
-public String getWeeklyForecast(Model model) {
-    List<ForecastResult> weekForecast = new ArrayList<>();
+    @GetMapping("/forecast")
+    public String getWeeklyForecast(Model model) {
+        List<ForecastResult> weekForecast = new ArrayList<>();
 
-    weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+        weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
+            "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+            8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    model.addAttribute("forecastList", weekForecast);
-    return "forecast";
-}
+        model.addAttribute("forecastList", weekForecast);
+        return "forecast";
+    }
 
-private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
-    ForecastResult f = new ForecastResult();
-    f.setDate(date);
-    f.setDayOfWeek(day);
-    f.setWeather(weather);
-    f.setTemperature(temp);
-    f.setReservationCount(resCount);
-    f.setPredictedItems(items);
-    return f;
-}
+    private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
+        ForecastResult f = new ForecastResult();
+        f.setDate(date);
+        f.setDayOfWeek(day);
+        f.setWeather(weather);
+        f.setTemperature(temp);
+        f.setReservationCount(resCount);
+        f.setPredictedItems(items);
+        return f;
+    }
 
     // private CsvForecastService csvForecastService;
     // @GetMapping("/csv-forecast")
@@ -219,15 +223,27 @@ private ForecastResult createDummy(String date, String day, String weather, doub
         model.addAttribute("messages", messages);
         return "staff";
     }
+    
     // @GetMapping("/staff_change")
     // public String staff_changePage() {
     //     return "staff_change";
     // }
 
+    // @GetMapping("/main")
+    // public String mainPage() {
+    //     return "main";
+    // }
+
     @GetMapping("/main")
-    public String mainPage() {
-        return "main";
+    public String mainPage(Authentication authentication) {
+        // ログインユーザーの権限を確認して画面を分岐
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
+            return "main";  // 管理者用画面（main.html）
+        } else {
+            return "main_user";  // 一般ユーザー用画面（main_user.html）
+        }
     }
+
     @GetMapping("/main_user")
     public String mainUserPage() {
         return "main_user";
@@ -237,6 +253,7 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     public String mainPageForUsers() {
         return "mainForUsers.html";
     }
+    
     @RequestMapping("/Performance/PerformanceView")
     public String start() {
         return "PerformanceView.html";
@@ -293,6 +310,55 @@ private ForecastResult createDummy(String date, String day, String weather, doub
         return "sales_change";
     }
 
+    // @GetMapping("/salesforusers")
+    // public String salesForUsers(@RequestParam(defaultValue = "2025") int year,
+    //                             @RequestParam(defaultValue = "1") int month,
+    //                             Model model) {
+    //     // 年月のデータをモデルに追加
+    //     model.addAttribute("year", year);
+    //     model.addAttribute("month", month);
+        
+    //     try {
+    //         // 販売データを取得（既存のSalesServiceを利用）
+    //         // 注：実際のデータ取得処理は後で実装またはダミーデータ使用
+            
+    //         // 一時的にメッセージを表示（実際のデータ取得処理ができるまで）
+    //         model.addAttribute("message", year + "年" + month + "月の販売データを表示中");
+            
+    //         // TODO: 実際の販売データ取得処理をここに追加
+    //         // Map<LocalDate, DailySummary> dailySummary = salesService.getMonthlySummary(year, month);
+    //         // model.addAttribute("dailySummary", dailySummary);
+            
+    //     } catch (Exception e) {
+    //         model.addAttribute("message", "データの取得に失敗しました: " + e.getMessage());
+    //     }
+        
+    //     return "salesforusers";  // salesforusers.htmlテンプレートを返す
+    // }
+
+@GetMapping("/salesforusers")
+public String salesForUsers(@RequestParam(required = false, defaultValue = "2025") int year,
+                            @RequestParam(required = false, defaultValue = "1") int month,
+                            Model model) {
+
+    List<Sales> allSalesList = salesDataService.getAllSalesData();
+
+    List<Sales> filtered = allSalesList.stream()
+            .filter(s -> {
+                LocalDate date = s.getSalesDate();
+                return date.getYear() == year && date.getMonthValue() == month;
+            })
+            .toList();
+
+    Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(filtered);
+
+    model.addAttribute("dailySummary", dailySummary);
+    model.addAttribute("year", year);
+    model.addAttribute("month", month);
+
+    return "salesforusers";
+}
+
     // スタッフ修正ページ表示
     @GetMapping("/staff_change")
     public String showStaffChange(Model model) {
@@ -307,4 +373,47 @@ private ForecastResult createDummy(String date, String day, String weather, doub
         return "redirect:/staff_change"; // 削除後に再読み込み
     }
 
-}
+    private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
+        return salesList.stream()
+            .collect(Collectors.groupingBy(Sales::getSalesDate))
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByKey()) // 昇順：1月1日が最初にくる
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> {
+                    // 集計処理はそのまま
+                    LocalDate date = entry.getKey();
+                    List<Sales> salesForDate = entry.getValue();
+
+                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
+                    int totalBottles = 0;
+                    int totalAmount = 0;
+
+                    for (Sales sale : salesForDate) {
+                        String beerName = sale.getBeer().getBeerName();
+                        int bottles = sale.getSoldBottles();
+                        int amount = bottles * sale.getBeer().getPrice();
+
+                        beerData.merge(beerName,
+                            Map.of("bottles", bottles, "amount", amount),
+                            (existing, newEntry) -> Map.of(
+                                "bottles", existing.get("bottles") + newEntry.get("bottles"),
+                                "amount", existing.get("amount") + newEntry.get("amount")
+                            ));
+
+                        totalBottles += bottles;
+                        totalAmount += amount;
+                    }
+
+                    return Map.of(
+                        "beerData", beerData,
+                        "totalBottles", totalBottles,
+                        "totalAmount", totalAmount
+                    );
+                },
+                (a, b) -> a, // マージ戦略：重複なし
+                LinkedHashMap::new // 昇順を保持
+            ));
+    }
+} 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,11 +68,9 @@ public class SalesDataController {
 
     @PostMapping("/sales")
     public String showSalesData(Model model) {
-        // 正規化されたデータを取得
         List<Sales> salesList = service.getAllSalesData();
         List<Beer> beerList = service.getAllBeers();
         
-        // 日別集計データを作成（ビューで使いやすい形に加工）
         Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(salesList);
         
         model.addAttribute("salesList", salesList);
@@ -85,6 +84,22 @@ public class SalesDataController {
     // public String showSalesDataGet(Model model) {
     //     return showSalesData(model);
     // }
+    // @GetMapping("/Performance/Input")
+    // public String input(Model model) {
+    //     List<Sales> allSalesList = service.getAllSalesData();
+    //     model.addAttribute("salesData", allSalesList);
+    //     return "Input";
+    // }
+
+    @GetMapping("/sales_edit")
+    public String editSalesForDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                    Model model) {
+        List<Sales> salesList = service.getSalesByDate(date);
+        model.addAttribute("date", date);
+        model.addAttribute("salesList", salesList);
+        return "sales_edit";
+    }
+
 
     @GetMapping("/sales")
     public String showSalesDataGet(
@@ -94,7 +109,6 @@ public class SalesDataController {
 
         List<Sales> allSalesList = service.getAllSalesData();
 
-        // 対象年月のデータにフィルタリング
         List<Sales> filtered = allSalesList.stream()
                 .filter(s -> {
                     LocalDate date = s.getSalesDate();

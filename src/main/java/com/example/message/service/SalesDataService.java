@@ -1,5 +1,6 @@
 package com.example.message.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -59,4 +60,11 @@ public class SalesDataService {
     public List<Sales> getAllSalesWithDetails() {
         return salesRepository.findAll(); // JOIN FETCHでビール・ユーザー情報も取得
     }
+    public List<Sales> getSalesByDate(LocalDate date) {
+        return salesRepository.findBySalesDate(date);
+    }
+    public void saveSales(Sales sales) {
+        salesRepository.save(sales);
+    }
+    
 }

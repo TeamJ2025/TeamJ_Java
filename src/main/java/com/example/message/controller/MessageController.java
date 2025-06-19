@@ -20,10 +20,12 @@ import com.example.message.service.CsvForecastService;
 import com.example.message.entity.Sales;
 import com.example.message.entity.SalesData;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.message.service.SalesService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 
 //需要予測用
 import com.example.message.model.ForecastResult;
@@ -156,48 +158,48 @@ public class MessageController {
     //     return "forecast";
     // }
 
-@GetMapping("/forecast")
-public String getWeeklyForecast(Model model) {
-    List<ForecastResult> weekForecast = new ArrayList<>();
+// @GetMapping("/forecast")
+// public String getWeeklyForecast(Model model) {
+//     List<ForecastResult> weekForecast = new ArrayList<>();
 
-    weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
-        "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
-        8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
+//     weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
+//         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+//         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
-    model.addAttribute("forecastList", weekForecast);
-    return "forecast";
-}
+//     model.addAttribute("forecastList", weekForecast);
+//     return "forecast";
+// }
 
-private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
-    ForecastResult f = new ForecastResult();
-    f.setDate(date);
-    f.setDayOfWeek(day);
-    f.setWeather(weather);
-    f.setTemperature(temp);
-    f.setReservationCount(resCount);
-    f.setPredictedItems(items);
-    return f;
-}
+// private ForecastResult createDummy(String date, String day, String weather, double temp, int resCount, Map<String, Integer> items) {
+//     ForecastResult f = new ForecastResult();
+//     f.setDate(date);
+//     f.setDayOfWeek(day);
+//     f.setWeather(weather);
+//     f.setTemperature(temp);
+//     f.setReservationCount(resCount);
+//     f.setPredictedItems(items);
+//     return f;
+// }
 
     // private CsvForecastService csvForecastService;
     // @GetMapping("/csv-forecast")
@@ -207,6 +209,34 @@ private ForecastResult createDummy(String date, String day, String weather, doub
     //     return "csv_forecast"; 
     // }// → templates/csv_forecast.html
     //APIができたらcsv-forecastをコメントアウト
+    @GetMapping("/forecast")
+    public String getForecast(Model model) {
+        List<Map<String, Object>> fullList = forecastService.fetchForecast();
+
+        List<Map<String, Object>> slicedList = new ArrayList<>();
+        for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+            Map<String, Object> item = fullList.get(i);
+
+            // 日付をパースして曜日を取得
+            String dateStr = item.get("date").toString();
+            LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+
+            item.put("dayOfWeek", dayOfWeek);
+            item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+            item.put("reservationCount", 20);
+            slicedList.add(item);
+
+            if (dayOfWeek.equals("土曜日")) {
+                break;  // 土曜日のデータまでで終了
+            }
+        }
+
+        model.addAttribute("forecastList", slicedList);
+        return "forecast";
+    }
+
+
 
     @GetMapping("/brands")
     public String brandsPage() {

@@ -8,31 +8,42 @@ import org.springframework.http.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
 @Service
 public class ForecastService {
-    
-        // PythonのAPIのURL（必要に応じて変更）
-    private static final String PYTHON_API_URL = "https://teamj-app.azurewebsites.net/api/demand_prediction";
 
-    public ForecastResult fetchForecast() {
-        RestTemplate restTemplate = new RestTemplate();
+    public List<Map<String, Object>> fetchForecast() {
+        try {
+            String urlString = "https://teamj-app.azurewebsites.net/api/http_trigger_teamJ?code=XASwEES2B5ywQ8GKr_D7uu7zUFU21IeQQ-2ry12NsxaLAzFugWiJrA==";
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        // 空または簡単なPOSTデータ（例として空のMapをPOST）
-        Map<String, Object> requestBody = new HashMap<>();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            conn.getOutputStream().write("{}".getBytes());
 
-        // ヘッダー設定（JSONを送るの伝える）
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            Scanner scanner = new Scanner(conn.getInputStream());
+            StringBuilder json = new StringBuilder();
+            while (scanner.hasNext()) {
+                json.append(scanner.nextLine());
+            }
 
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        // Pythonからのレスポンスを ForecastResult にマッピングして取得
-        ResponseEntity<ForecastResult> response = restTemplate.postForEntity(
-                PYTHON_API_URL,
-                requestEntity,
-                ForecastResult.class
-        );
-
-        return response.getBody();
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(json.toString(), new TypeReference<List<Map<String, Object>>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }

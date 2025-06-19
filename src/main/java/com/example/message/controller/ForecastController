@@ -1,0 +1,38 @@
+// package com.example.message.controller;
+
+// import com.example.message.service.ForecastService;
+// import org.springframework.stereotype.Controller;
+// import org.springframework.ui.Model;
+// import org.springframework.web.bind.annotation.GetMapping;
+
+// import java.time.LocalDate;
+// import java.time.format.TextStyle;
+// import java.util.List;
+// import java.util.Locale;
+// import java.util.Map;
+
+
+// @Controller
+// public class ForecastController {
+//     private final ForecastService forecastService;
+
+//     public ForecastController(ForecastService forecastService) {
+//         this.forecastService = forecastService;
+//     }
+
+//     @GetMapping("/forecast")
+//     public String getForecast(Model model) {
+//         List<Map<String, Object>> list = forecastService.fetchForecast();
+
+//         for (Map<String, Object> item : list) {
+//             String dateStr = item.get("date").toString();
+//             var date = LocalDate.parse(dateStr.substring(0, 10));
+//             item.put("dayOfWeek", date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE));
+//             item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+//             item.put("reservationCount", 20);
+//         }
+
+//         model.addAttribute("forecastList", list);
+//         return "forecast";
+//     }
+// }

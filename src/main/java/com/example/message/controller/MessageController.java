@@ -21,6 +21,21 @@ import com.example.message.service.CsvForecastService;
 import com.example.message.entity.Beer;
 import com.example.message.entity.Sales;
 import com.example.message.entity.SalesData;
+import java.util.List;
+import java.util.Locale;
+
+import com.example.message.service.SalesService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
+
+//需要予測用
+import com.example.message.model.ForecastResult;
+import com.example.message.model.Message;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.ForecastService;
+import com.example.message.service.MessageService;
+import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
 
 import java.time.LocalDate;
@@ -45,15 +60,18 @@ public class MessageController {
     private final MessageRepository repository;
     private final SalesService salesService;
     private final SalesDataService salesDataService;
+    private ForecastService forecastService;
 
     public MessageController(MessageService service,
                             MessageRepository repository,
                             SalesService salesService,
-                            SalesDataService salesDataService) {
+                            SalesDataService salesDataService,
+                            ForecastService forecastService) {
         this.service = service;
         this.repository = repository;
         this.salesService = salesService;
         this.salesDataService = salesDataService;
+        this.forecastService = forecastService;
     }
 
     @GetMapping("/")
@@ -90,16 +108,33 @@ public class MessageController {
     }
     
 
-    @Autowired
-    private ForecastService forecastService;
-    
-    // APIができたら復活　csv-forecastをコメントアウト
     @GetMapping("/forecast")
     public String getForecast(Model model) {
-        ForecastResult result = forecastService.fetchForecast();
-        model.addAttribute("forecast", result);
+        List<Map<String, Object>> fullList = forecastService.fetchForecast();
+
+        List<Map<String, Object>> slicedList = new ArrayList<>();
+        for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+            Map<String, Object> item = fullList.get(i);
+
+            // 日付をパースして曜日を取得
+            String dateStr = item.get("date").toString();
+            LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+
+            item.put("dayOfWeek", dayOfWeek);
+            item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+            item.put("reservationCount", 20);
+            slicedList.add(item);
+
+            if (dayOfWeek.equals("土曜日")) {
+                break;  // 土曜日のデータまでで終了
+            }
+        }
+
+        model.addAttribute("forecastList", slicedList);
         return "forecast";
     }
+
 
     // @GetMapping("/forecast")
     // public String getWeeklyForecast(Model model) {
@@ -168,6 +203,11 @@ public class MessageController {
     @GetMapping("/main_user")
     public String mainUserPage() {
         return "main_user";
+    }
+
+    @GetMapping("/minigame")
+    public String minigamePage() {
+        return "minigame";
     }
 
     @GetMapping("/mainForUsers")

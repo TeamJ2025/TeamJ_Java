@@ -222,9 +222,10 @@ public class MessageController {
     // }// → templates/csv_forecast.html
     //APIができたらcsv-forecastをコメントアウト
 
+    // スタッフ一覧表示（論理削除されていないもののみ）
     @GetMapping("/staff")
     public String staffPage(Model model) {
-        List<Message> messages = service.getAllMessages();
+        List<Message> messages = repository.findByIsDeletedFalse(); // 変更
         model.addAttribute("messages", messages);
         return "staff";
     }
@@ -473,10 +474,24 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
     // }
 
     // スタッフ管理ページ表示（元のデバッグメソッドを置き換え）
+    // @GetMapping("/staff_change")
+    // public String showStaffChange(Model model) {
+    //     try {
+    //         List<Message> messages = repository.findAll();
+    //         model.addAttribute("messages", messages);
+    //         return "staff_change";
+    //     } catch (Exception e) {
+    //         model.addAttribute("errorMessage", "データ取得エラー: " + e.getMessage());
+    //         model.addAttribute("messages", new ArrayList<Message>());
+    //         return "staff_change";
+    //     }
+    // }
+
+        // スタッフ管理ページ表示（論理削除されていないもののみ）
     @GetMapping("/staff_change")
     public String showStaffChange(Model model) {
         try {
-            List<Message> messages = repository.findAll();
+            List<Message> messages = repository.findByIsDeletedFalse(); // 変更
             model.addAttribute("messages", messages);
             return "staff_change";
         } catch (Exception e) {
@@ -486,13 +501,31 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
         }
     }
 
+    // スタッフ削除処理（論理削除に変更）
     @PostMapping("/staff/delete")
     public String deleteStaff(@RequestParam Integer id) {
-        repository.deleteById(id);
-        return "redirect:/staff_change"; // 削除後に再読み込み
+        try {
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null);
+            if (user != null) {
+                user.setIsDeleted(true); // 論理削除フラグを設定
+                user.setUpdatedAt(LocalDateTime.now()); // 更新日時を設定
+                repository.save(user); // 保存
+            }
+        } catch (Exception e) {
+            // エラーログ出力（必要に応じて）
+            e.printStackTrace();
+        }
+        return "redirect:/staff_change";
     }
 
-    // ユーザー情報編集処理
+
+    // @PostMapping("/staff/delete")
+    // public String deleteStaff(@RequestParam Integer id) {
+    //     repository.deleteById(id);
+    //     return "redirect:/staff_change"; // 削除後に再読み込み
+    // }
+
+    // スタッフ編集処理（論理削除されていないもののみ対象）
     @PostMapping("/staff/edit")
     public String editStaff(@RequestParam Integer id,
                             @RequestParam String name,
@@ -503,19 +536,19 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
             // 入力値検証
             if (name == null || name.trim().isEmpty()) {
                 model.addAttribute("errorMessage", "名前は必須です。");
-                List<Message> messages = repository.findAll();
+                List<Message> messages = repository.findByIsDeletedFalse(); // 変更
                 model.addAttribute("messages", messages);
                 return "staff_change";
             }
             
             if (email == null || email.trim().isEmpty()) {
                 model.addAttribute("errorMessage", "メールアドレスは必須です。");
-                List<Message> messages = repository.findAll();
+                List<Message> messages = repository.findByIsDeletedFalse(); // 変更
                 model.addAttribute("messages", messages);
                 return "staff_change";
             }
 
-            Message user = repository.findById(id).orElse(null);
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null); // 変更
             if (user != null) {
                 user.setName(name.trim());
                 user.setEmail(email.trim());
@@ -535,13 +568,61 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
             model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
         }
         
-        List<Message> messages = repository.findAll();
+        List<Message> messages = repository.findByIsDeletedFalse(); // 変更
         model.addAttribute("messages", messages);
         return "staff_change";
     }
 
+    // @PostMapping("/staff/edit")
+    // public String editStaff(@RequestParam Integer id,
+    //                         @RequestParam String name,
+    //                         @RequestParam String email,
+    //                         @RequestParam(required = false) String password,
+    //                         Model model) {
+    //     try {
+    //         // 入力値検証
+    //         if (name == null || name.trim().isEmpty()) {
+    //             model.addAttribute("errorMessage", "名前は必須です。");
+    //             List<Message> messages = repository.findAll();
+    //             model.addAttribute("messages", messages);
+    //             return "staff_change";
+    //         }
+            
+    //         if (email == null || email.trim().isEmpty()) {
+    //             model.addAttribute("errorMessage", "メールアドレスは必須です。");
+    //             List<Message> messages = repository.findAll();
+    //             model.addAttribute("messages", messages);
+    //             return "staff_change";
+    //         }
+
+    //         Message user = repository.findById(id).orElse(null);
+    //         if (user != null) {
+    //             user.setName(name.trim());
+    //             user.setEmail(email.trim());
+                
+    //             // パスワードが入力されている場合のみ更新
+    //             if (password != null && !password.trim().isEmpty()) {
+    //                 user.setPassword(passwordEncoder.encode(password));
+    //             }
+                
+    //             user.setUpdatedAt(LocalDateTime.now());
+    //             repository.save(user);
+    //             model.addAttribute("successMessage", "ユーザー情報を更新しました。");
+    //         } else {
+    //             model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+    //         }
+    //     } catch (Exception e) {
+    //         model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
+    //     }
+        
+    //     List<Message> messages = repository.findAll();
+    //     model.addAttribute("messages", messages);
+    //     return "staff_change";
+    // }
+
     // 権限変更処理
-    @PostMapping("/staff/role")
+
+        @PostMapping("/staff/role")
     public String changeRole(@RequestParam Integer id,
                             @RequestParam String newRole,
                             Model model) {
@@ -549,12 +630,12 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
             // 入力値検証（実際の権限値 'admin' と 'user' に対応）
             if (!("admin".equals(newRole) || "user".equals(newRole))) {
                 model.addAttribute("errorMessage", "無効な権限です。");
-                List<Message> messages = repository.findAll();
+                List<Message> messages = repository.findByIsDeletedFalse(); // 変更
                 model.addAttribute("messages", messages);
                 return "staff_change";
             }
 
-            Message user = repository.findById(id).orElse(null);
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null); // 変更
             if (user != null) {
                 user.setRole(newRole);
                 user.setUpdatedAt(LocalDateTime.now());
@@ -570,10 +651,44 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
             model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
         }
         
-        List<Message> messages = repository.findAll();
+        List<Message> messages = repository.findByIsDeletedFalse(); // 変更
         model.addAttribute("messages", messages);
         return "staff_change";
     }
+
+    // @PostMapping("/staff/role")
+    // public String changeRole(@RequestParam Integer id,
+    //                         @RequestParam String newRole,
+    //                         Model model) {
+    //     try {
+    //         // 入力値検証（実際の権限値 'admin' と 'user' に対応）
+    //         if (!("admin".equals(newRole) || "user".equals(newRole))) {
+    //             model.addAttribute("errorMessage", "無効な権限です。");
+    //             List<Message> messages = repository.findAll();
+    //             model.addAttribute("messages", messages);
+    //             return "staff_change";
+    //         }
+
+    //         Message user = repository.findById(id).orElse(null);
+    //         if (user != null) {
+    //             user.setRole(newRole);
+    //             user.setUpdatedAt(LocalDateTime.now());
+    //             repository.save(user);
+                
+    //             String roleDisplayName = "admin".equals(newRole) ? "管理者" : "従業員";
+    //             model.addAttribute("successMessage", 
+    //                 user.getName() + "さんの権限を" + roleDisplayName + "に変更しました。");
+    //         } else {
+    //             model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+    //         }
+    //     } catch (Exception e) {
+    //         model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
+    //     }
+        
+    //     List<Message> messages = repository.findAll();
+    //     model.addAttribute("messages", messages);
+    //     return "staff_change";
+    // }
 
     private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
         return salesList.stream()

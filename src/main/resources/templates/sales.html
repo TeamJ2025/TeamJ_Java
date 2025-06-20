@@ -90,19 +90,27 @@
         .calendar-day {
             background-color: white;
             border: 1px solid #ccc;
-            padding: 10px;
-            min-height: 100px;
+            padding: 12px;
+            min-height: 140px;
+            border-radius: 8px;
+            box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
         }
 
         .calendar-day-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            align-items: flex-start;
+            gap: 6px;
         }
 
         .calendar-day-content p {
             margin: 0;
+            font-size: 14px;
+        }
+
+        .calendar-day-content p.date {
+            font-weight: bold;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -137,7 +145,6 @@
         <button type="submit">表示</button>
     </form>
 
-
     <!-- メッセージ表示 -->
     <div th:if="${message != null}">
         <p th:text="${message}"></p>
@@ -158,24 +165,17 @@
         <div th:each="entry : ${dailySummary}" class="calendar-day">
             <div class="calendar-day-content">
                 <!-- 日付 -->
-                <p th:text="${#temporals.format(entry.key, 'MM/dd')}">日付</p>
+                <p class="date" th:text="'📅 ' + ${#temporals.format(entry.key, 'MM/dd (E)', 'Asia/Tokyo')}">日付</p>
 
-                <!-- ビール別データ（必要なら表示） -->
-                <!--
-                <div th:each="beerEntry : ${entry.value.beerData}">
-                    <p th:text="${beerEntry.key}">ビール名</p>
-                    <p th:text="'本数: ' + ${beerEntry.value.bottles} + '本'"></p>
-                    <p th:text="'金額: ' + ${#numbers.formatInteger(beerEntry.value.amount, 0, 'COMMA')} + ' 円'"></p>
-                </div>
-                -->
+                <!-- 天気 -->
+                <p th:if="${entry.value.weather != null}" th:text="'☁️ 天気: ' + ${entry.value.weather}">天気</p>
 
                 <!-- 合計 -->
-                <p th:text="'合計本数: ' + ${entry.value.totalBottles} + '本'">合計本数</p>
-                <p th:text="'合計金額: ' + ${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + ' 円'">合計金額</p>
+                <p th:text="'📦 合計本数: ' + ${entry.value.totalBottles} + '本'">合計本数</p>
+                <p th:text="'💴 合計金額: ' + ${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + ' 円'">合計金額</p>
             </div>
         </div>
     </div>
 </div>
 </body>
 </html>
- 

@@ -54,6 +54,7 @@ public class SalesDataController {
 */
 
 import com.example.message.entity.Sales;
+import com.example.message.entity.WeatherData;
 import com.example.message.repository.MessageRepository;
 import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
@@ -129,15 +130,27 @@ public class SalesDataController {
 
 
     private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
+        // 対象日付を収集
+        List<LocalDate> dates = salesList.stream()
+            .map(Sales::getSalesDate)
+            .distinct()
+            .toList();
+
+        // 天気データをまとめて取得
+        Map<LocalDate, String> weatherMap = service.getWeatherDataByDates(dates).stream()
+            .collect(Collectors.toMap(
+                WeatherData::getObservationDate,
+                WeatherData::getWeatherDescription
+            ));
+
         return salesList.stream()
             .collect(Collectors.groupingBy(Sales::getSalesDate))
             .entrySet()
             .stream()
-            .sorted(Map.Entry.comparingByKey()) // 昇順：1月1日が最初にくる
+            .sorted(Map.Entry.comparingByKey())
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 entry -> {
-                    // 集計処理はそのまま
                     LocalDate date = entry.getKey();
                     List<Sales> salesForDate = entry.getValue();
 
@@ -161,14 +174,17 @@ public class SalesDataController {
                         totalAmount += amount;
                     }
 
+                    String weather = weatherMap.getOrDefault(date, "データなし");
+
                     return Map.of(
                         "beerData", beerData,
                         "totalBottles", totalBottles,
-                        "totalAmount", totalAmount
+                        "totalAmount", totalAmount,
+                        "weather", weather
                     );
                 },
-                (a, b) -> a, // マージ戦略：重複なし
-                LinkedHashMap::new // 昇順を保持
+                (a, b) -> a,
+                LinkedHashMap::new
             ));
     }
 }

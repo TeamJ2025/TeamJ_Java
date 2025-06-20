@@ -10,17 +10,12 @@ import com.example.message.service.SalesDataService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.example.message.model.ForecastResult;
 import com.example.message.service.ForecastService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.example.message.model.CsvForecastRecord;
-import com.example.message.service.CsvForecastService;
 import com.example.message.entity.Beer;
 import com.example.message.entity.Sales;
-import com.example.message.entity.SalesData;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,18 +23,6 @@ import com.example.message.service.SalesService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
-
-//需要予測用
-import com.example.message.model.ForecastResult;
-import com.example.message.model.Message;
-import com.example.message.repository.MessageRepository;
-import com.example.message.service.ForecastService;
-import com.example.message.service.MessageService;
-import com.example.message.service.SalesDataService;
-import com.example.message.service.SalesService;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 //需要予測、ダミーデータを使った挙動確認用
 import java.util.HashMap;
@@ -48,8 +31,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.List;
 import java.util.Map;
 
 
@@ -113,7 +94,7 @@ public class MessageController {
         List<Map<String, Object>> fullList = forecastService.fetchForecast();
 
         List<Map<String, Object>> slicedList = new ArrayList<>();
-        for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+        for (int i = 1; i < fullList.size(); i++) {
             Map<String, Object> item = fullList.get(i);
 
             // 日付をパースして曜日を取得
@@ -121,13 +102,17 @@ public class MessageController {
             LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
             String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
 
+            if (dayOfWeek.equals("日曜日")) {
+                continue;
+            }
+
             item.put("dayOfWeek", dayOfWeek);
             item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
             item.put("reservationCount", 20);
             slicedList.add(item);
 
-            if (dayOfWeek.equals("土曜日")) {
-                break;  // 土曜日のデータまでで終了
+            if (dayOfWeek.equals("月曜日")) {
+                break;
             }
         }
 

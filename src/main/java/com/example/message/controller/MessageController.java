@@ -411,18 +411,120 @@ public class MessageController {
     }
 
     // スタッフ修正ページ表示
-    @GetMapping("/staff_change")
-    public String showStaffChange(Model model) {
-        List<Message> messages = repository.findAll();
-        model.addAttribute("messages", messages);
-        return "staff_change"; // 上のHTMLファイル
-    }
+    // @GetMapping("/staff_change")
+    // public String showStaffChange(Model model) {
+    //     List<Message> messages = repository.findAll();
+    //     model.addAttribute("messages", messages);
+    //     return "staff_change"; // 上のHTMLファイル
+    // }
+
+        // スタッフ管理ページ表示（元のデバッグメソッドを置き換え）
+        @GetMapping("/staff_change")
+        public String showStaffChange(Model model) {
+            try {
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            } catch (Exception e) {
+                model.addAttribute("errorMessage", "データ取得エラー: " + e.getMessage());
+                model.addAttribute("messages", new ArrayList<Message>());
+                return "staff_change";
+            }
+        }
+
     @PostMapping("/staff/delete")
     public String deleteStaff(@RequestParam Integer id) {
         repository.deleteById(id);
         return "redirect:/staff_change"; // 削除後に再読み込み
     }
  
+    // ユーザー情報編集処理
+    @PostMapping("/staff/edit")
+    public String editStaff(@RequestParam Integer id,
+                            @RequestParam String name,
+                            @RequestParam String email,
+                            @RequestParam(required = false) String password,
+                            Model model) {
+        try {
+            // 入力値検証
+            if (name == null || name.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "名前は必須です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+            
+            if (email == null || email.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "メールアドレスは必須です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findById(id).orElse(null);
+            if (user != null) {
+                user.setName(name.trim());
+                user.setEmail(email.trim());
+                
+                // パスワードが入力されている場合のみ更新
+                if (password != null && !password.trim().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(password));
+                }
+                
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                model.addAttribute("successMessage", "ユーザー情報を更新しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change";
+    }
+
+    // パスワードエンコーダーを追加
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    // 権限変更処理
+    @PostMapping("/staff/role")
+    public String changeRole(@RequestParam Integer id,
+                            @RequestParam String newRole,
+                            Model model) {
+        try {
+            // 入力値検証（実際の権限値 'admin' と 'user' に対応）
+            if (!("admin".equals(newRole) || "user".equals(newRole))) {
+                model.addAttribute("errorMessage", "無効な権限です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findById(id).orElse(null);
+            if (user != null) {
+                user.setRole(newRole);
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                
+                String roleDisplayName = "admin".equals(newRole) ? "管理者" : "従業員";
+                model.addAttribute("successMessage", 
+                    user.getName() + "さんの権限を" + roleDisplayName + "に変更しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change";
+    }    
+
     @PostMapping("/sales_change")
     public String updateSalesData(@RequestParam Map<String, String> allParams) {
         List<Sales> updatedSalesList = new ArrayList<>();

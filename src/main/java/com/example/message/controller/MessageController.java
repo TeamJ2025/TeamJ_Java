@@ -1,63 +1,45 @@
 package com.example.message.controller;
 
-import com.example.message.service.MessageService;
-import com.example.message.model.Message;
-import com.example.message.repository.BeerRepository;
-import com.example.message.repository.MessageRepository;
-import com.example.message.service.SalesDataService;
-
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import com.example.message.model.ForecastResult;
-import com.example.message.service.ForecastService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.example.message.model.CsvForecastRecord;
-import com.example.message.service.CsvForecastService;
-import com.example.message.entity.Beer;
-import com.example.message.entity.Sales;
-import com.example.message.entity.SalesData;
-import java.util.List;
-
-import com.example.message.service.SalesService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-//需要予測用
-import com.example.message.model.ForecastResult;
-import com.example.message.model.Message;
-import com.example.message.repository.MessageRepository;
-import com.example.message.service.ForecastService;
-import com.example.message.service.MessageService;
-import com.example.message.service.SalesDataService;
-import com.example.message.service.SalesService;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 //需要予測、ダミーデータを使った挙動確認用
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
-import com.example.message.service.SalesDataService;
-import com.example.message.entity.Sales;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import com.example.message.service.SalesDataService;
-import com.example.message.service.SalesService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.message.entity.Beer;
+import com.example.message.entity.Sales;
+import com.example.message.model.ForecastResult;
+import com.example.message.model.Message;
+import com.example.message.repository.BeerRepository;
+import com.example.message.repository.MessageRepository;
+import com.example.message.service.ForecastService;
+import com.example.message.service.MessageService;
+import com.example.message.service.SalesDataService;
+import com.example.message.service.SalesService;
+
+import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
 
 @Controller
 public class MessageController {
@@ -66,6 +48,12 @@ public class MessageController {
     private final MessageRepository repository;
     private final SalesService salesService;
     private final SalesDataService salesDataService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private BeerRepository beerRepository;
 
     public MessageController(MessageService service,
                             MessageRepository repository,
@@ -390,9 +378,6 @@ public class MessageController {
         salesService.saveAll(salesList);
         return "redirect:/main";
     }
-    
-    @Autowired
-    private BeerRepository beerRepository;
 
     // 銘柄一覧ページ表示
     @GetMapping("/brands")
@@ -480,17 +465,114 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
 }
 
     // スタッフ修正ページ表示
+    // @GetMapping("/staff_change")
+    // public String showStaffChange(Model model) {
+    //     List<Message> messages = repository.findAll();
+    //     model.addAttribute("messages", messages);
+    //     return "staff_change"; // 上のHTMLファイル
+    // }
+
+    // スタッフ管理ページ表示（元のデバッグメソッドを置き換え）
     @GetMapping("/staff_change")
     public String showStaffChange(Model model) {
-        List<Message> messages = repository.findAll();
-        model.addAttribute("messages", messages);
-        return "staff_change"; // 上のHTMLファイル
+        try {
+            List<Message> messages = repository.findAll();
+            model.addAttribute("messages", messages);
+            return "staff_change";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "データ取得エラー: " + e.getMessage());
+            model.addAttribute("messages", new ArrayList<Message>());
+            return "staff_change";
+        }
     }
 
     @PostMapping("/staff/delete")
     public String deleteStaff(@RequestParam Integer id) {
         repository.deleteById(id);
         return "redirect:/staff_change"; // 削除後に再読み込み
+    }
+
+    // ユーザー情報編集処理
+    @PostMapping("/staff/edit")
+    public String editStaff(@RequestParam Integer id,
+                            @RequestParam String name,
+                            @RequestParam String email,
+                            @RequestParam(required = false) String password,
+                            Model model) {
+        try {
+            // 入力値検証
+            if (name == null || name.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "名前は必須です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+            
+            if (email == null || email.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "メールアドレスは必須です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findById(id).orElse(null);
+            if (user != null) {
+                user.setName(name.trim());
+                user.setEmail(email.trim());
+                
+                // パスワードが入力されている場合のみ更新
+                if (password != null && !password.trim().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(password));
+                }
+                
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                model.addAttribute("successMessage", "ユーザー情報を更新しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change";
+    }
+
+    // 権限変更処理
+    @PostMapping("/staff/role")
+    public String changeRole(@RequestParam Integer id,
+                            @RequestParam String newRole,
+                            Model model) {
+        try {
+            // 入力値検証（実際の権限値 'admin' と 'user' に対応）
+            if (!("admin".equals(newRole) || "user".equals(newRole))) {
+                model.addAttribute("errorMessage", "無効な権限です。");
+                List<Message> messages = repository.findAll();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findById(id).orElse(null);
+            if (user != null) {
+                user.setRole(newRole);
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                
+                String roleDisplayName = "admin".equals(newRole) ? "管理者" : "従業員";
+                model.addAttribute("successMessage", 
+                    user.getName() + "さんの権限を" + roleDisplayName + "に変更しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change";
     }
 
     private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {

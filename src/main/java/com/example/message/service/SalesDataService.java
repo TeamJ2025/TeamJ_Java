@@ -12,7 +12,8 @@ import com.example.message.entity.Beer;
 import com.example.message.entity.SalesData;
 import com.example.message.repository.SalesDataRepository;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -24,9 +25,19 @@ public class SalesDataService {
         this.repository = repository;
     }
 
-    public List<SalesData> getAllSalesData() {
-        List<SalesData> salesDataList = repository.findAllByOrderBySaleDayDesc();
-        return salesDataList.isEmpty() ? new ArrayList<>() : salesDataList;
+    public List<SalesData> getSalesDataByMonth(int year, int month) {
+        // 月ごとのデータを取得するメソッド（例: 月初日から月末日まで）
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        return repository.findAllBySaleDayBetween(startDate, endDate);
+    }
+
+    public SalesData getSalesDataByDate(LocalDate saleDay) {
+        return repository.findBySaleDay(saleDay);  // 特定の日付でデータを取得
+    }
+
+    public void updateSalesData(SalesData updatedData) {
+        repository.save(updatedData);  // 更新されたデータを保存
     }
 }
 */
@@ -34,6 +45,7 @@ public class SalesDataService {
 import com.example.message.entity.Sales;
 import com.example.message.repository.BeerRepository;
 import com.example.message.repository.SalesRepository;
+
 
 @Service
 public class SalesDataService {

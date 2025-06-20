@@ -72,13 +72,13 @@ public class SalesDataController {
     public String showSalesData(Model model) {
         List<Sales> salesList = service.getAllSalesData();
         List<Beer> beerList = service.getAllBeers();
-        
+
         Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(salesList);
-        
+
         model.addAttribute("salesList", salesList);
         model.addAttribute("beerList", beerList);
         model.addAttribute("dailySummary", dailySummary);
-        
+
         return "sales";
     }
 

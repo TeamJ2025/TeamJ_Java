@@ -125,7 +125,7 @@
             <option th:selected="${year == 2024}" value="2024">2024</option>
             <option th:selected="${year == 2025}" value="2025">2025</option>
         </select>
-        
+
         <label for="month">月:</label>
         <select name="month" id="month">
             <option th:each="m : ${#numbers.sequence(1, 12)}"
@@ -133,7 +133,7 @@
                     th:text="${m + '月'}"
                     th:selected="${m == month}">1月</option>
         </select>
-        
+
         <button type="submit">表示</button>
     </form>
 
@@ -178,3 +178,4 @@
 </div>
 </body>
 </html>
+ 

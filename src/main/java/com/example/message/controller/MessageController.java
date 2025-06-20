@@ -426,8 +426,129 @@ public class MessageController {
     // }
 
     @GetMapping("/sales_change")
-    public String sales_changePage() {
+    public String showSalesChangePage(@RequestParam int year, @RequestParam int month, Model model) {
+        List<Sales> allSales = salesDataService.getAllSalesData();
+ 
+        // 指定年月でフィルタ
+        List<Sales> filtered = allSales.stream()
+                .filter(s -> {
+                    LocalDate date = s.getSalesDate();
+                    return date.getYear() == year && date.getMonthValue() == month;
+                })
+                .toList();
+ 
+        // 修正ポイント：戻り値の型と一致させる
+        Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
+ 
+        model.addAttribute("dailySummary", dailySummary);
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+        model.addAttribute("beerList", salesDataService.getAllBeers()); // ビール一覧（列ヘッダーに使う）
+ 
         return "sales_change";
+    }
+
+    @GetMapping("/message/sales_view") // 例：メッセージ画面から売上を見るとき
+    public String showSalesDataInMessage(Model model) {
+        List<Sales> salesList = salesDataService.getAllSalesData();
+ 
+        // 修正：戻り値型を正しく合わせる
+        Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(salesList);
+ 
+        model.addAttribute("dailySummary", dailySummary);
+        model.addAttribute("year", 2025);
+        model.addAttribute("month", 6);
+        model.addAttribute("beerList", salesDataService.getAllBeers()); // 必要ならこれも追加
+ 
+        return "sales"; // templates/sales.html を表示
+    }
+ 
+ 
+    private Map<LocalDate, Map<String, Map<String, Integer>>> createDailySummary(List<Sales> salesList) {
+        return salesList.stream()
+            .collect(Collectors.groupingBy(Sales::getSalesDate)) // 日付ごとにまとめる
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toMap(
+                Map.Entry::getKey, // 日付
+                entry -> {
+                    List<Sales> salesForDate = entry.getValue();
+                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
+ 
+                    for (Sales sale : salesForDate) {
+                        String beerName = sale.getBeer().getBeerName();
+                        int bottles = sale.getSoldBottles();
+                        int amount = bottles * sale.getBeer().getPrice();
+ 
+                        beerData.merge(
+                            beerName,
+                            new HashMap<>(Map.of("bottles", bottles, "amount", amount)),
+                            (existing, newEntry) -> {
+                                int updatedBottles = existing.getOrDefault("bottles", 0) + newEntry.getOrDefault("bottles", 0);
+                                int updatedAmount = existing.getOrDefault("amount", 0) + newEntry.getOrDefault("amount", 0);
+                                existing.put("bottles", updatedBottles);
+                                existing.put("amount", updatedAmount);
+                                return existing;
+                            }
+                        );
+                    }
+ 
+                    return beerData;
+                },
+                (a, b) -> a,
+                LinkedHashMap::new
+            ));
+    }
+
+    // スタッフ修正ページ表示
+    @GetMapping("/staff_change")
+    public String showStaffChange(Model model) {
+        List<Message> messages = repository.findAll();
+        model.addAttribute("messages", messages);
+        return "staff_change"; // 上のHTMLファイル
+    }
+    @PostMapping("/staff/delete")
+    public String deleteStaff(@RequestParam Integer id) {
+        repository.deleteById(id);
+        return "redirect:/staff_change"; // 削除後に再読み込み
+    }
+ 
+    @PostMapping("/sales_change")
+    public String updateSalesData(@RequestParam Map<String, String> allParams) {
+        List<Sales> updatedSalesList = new ArrayList<>();
+ 
+        for (Map.Entry<String, String> entry : allParams.entrySet()) {
+            String key = entry.getKey(); // totalBottles__2024-07-01 など
+            String value = entry.getValue();
+ 
+            if (!key.contains("__")) continue;
+ 
+            try {
+                String[] parts = key.split("__");
+                if (parts.length != 2) continue;
+ 
+                String beerName = parts[0];
+                LocalDate date = LocalDate.parse(parts[1]);
+                int bottles = Integer.parseInt(value);
+ 
+                // 日付・ビール名で該当するSalesを取得
+                List<Sales> salesList = salesDataService.getSalesByDate(date).stream()
+                    .filter(s -> s.getBeer().getBeerName().equals(beerName))
+                    .toList();
+ 
+                for (Sales sale : salesList) {
+                    sale.setSoldBottles(bottles);
+                    sale.setUpdatedAt(LocalDateTime.now());
+                    updatedSalesList.add(sale);
+                }
+            } catch (Exception e) {
+                System.err.println("変換エラー: " + key + " = " + value);
+            }
+        }
+ 
+        salesService.saveAll(updatedSalesList);
+        return "redirect:/sales"; // 保存完了後に sales 一覧ページへ
     }
 
     // @GetMapping("/salesforusers")
@@ -480,60 +601,60 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
 }
 
     // スタッフ修正ページ表示
-    @GetMapping("/staff_change")
-    public String showStaffChange(Model model) {
-        List<Message> messages = repository.findAll();
-        model.addAttribute("messages", messages);
-        return "staff_change"; // 上のHTMLファイル
-    }
+    // @GetMapping("/staff_change")
+    // public String showStaffChange(Model model) {
+    //     List<Message> messages = repository.findAll();
+    //     model.addAttribute("messages", messages);
+    //     return "staff_change"; // 上のHTMLファイル
+    // }
 
-    @PostMapping("/staff/delete")
-    public String deleteStaff(@RequestParam Integer id) {
-        repository.deleteById(id);
-        return "redirect:/staff_change"; // 削除後に再読み込み
-    }
+    // @PostMapping("/staff/delete")
+    // public String deleteStaff(@RequestParam Integer id) {
+    //     repository.deleteById(id);
+    //     return "redirect:/staff_change"; // 削除後に再読み込み
+    // }
 
-    private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
-        return salesList.stream()
-            .collect(Collectors.groupingBy(Sales::getSalesDate))
-            .entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByKey()) // 昇順：1月1日が最初にくる
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                entry -> {
-                    // 集計処理はそのまま
-                    LocalDate date = entry.getKey();
-                    List<Sales> salesForDate = entry.getValue();
+    // private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
+    //     return salesList.stream()
+    //         .collect(Collectors.groupingBy(Sales::getSalesDate))
+    //         .entrySet()
+    //         .stream()
+    //         .sorted(Map.Entry.comparingByKey()) // 昇順：1月1日が最初にくる
+    //         .collect(Collectors.toMap(
+    //             Map.Entry::getKey,
+    //             entry -> {
+    //                 // 集計処理はそのまま
+    //                 LocalDate date = entry.getKey();
+    //                 List<Sales> salesForDate = entry.getValue();
 
-                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
-                    int totalBottles = 0;
-                    int totalAmount = 0;
+    //                 Map<String, Map<String, Integer>> beerData = new HashMap<>();
+    //                 int totalBottles = 0;
+    //                 int totalAmount = 0;
 
-                    for (Sales sale : salesForDate) {
-                        String beerName = sale.getBeer().getBeerName();
-                        int bottles = sale.getSoldBottles();
-                        int amount = bottles * sale.getBeer().getPrice();
+    //                 for (Sales sale : salesForDate) {
+    //                     String beerName = sale.getBeer().getBeerName();
+    //                     int bottles = sale.getSoldBottles();
+    //                     int amount = bottles * sale.getBeer().getPrice();
 
-                        beerData.merge(beerName,
-                            Map.of("bottles", bottles, "amount", amount),
-                            (existing, newEntry) -> Map.of(
-                                "bottles", existing.get("bottles") + newEntry.get("bottles"),
-                                "amount", existing.get("amount") + newEntry.get("amount")
-                            ));
+    //                     beerData.merge(beerName,
+    //                         Map.of("bottles", bottles, "amount", amount),
+    //                         (existing, newEntry) -> Map.of(
+    //                             "bottles", existing.get("bottles") + newEntry.get("bottles"),
+    //                             "amount", existing.get("amount") + newEntry.get("amount")
+    //                         ));
 
-                        totalBottles += bottles;
-                        totalAmount += amount;
-                    }
+    //                     totalBottles += bottles;
+    //                     totalAmount += amount;
+    //                 }
 
-                    return Map.of(
-                        "beerData", beerData,
-                        "totalBottles", totalBottles,
-                        "totalAmount", totalAmount
-                    );
-                },
-                (a, b) -> a, // マージ戦略：重複なし
-                LinkedHashMap::new // 昇順を保持
-            ));
-    }
+    //                 return Map.of(
+    //                     "beerData", beerData,
+    //                     "totalBottles", totalBottles,
+    //                     "totalAmount", totalAmount
+    //                 );
+    //             },
+    //             (a, b) -> a, // マージ戦略：重複なし
+    //             LinkedHashMap::new // 昇順を保持
+    //         ));
+    // }
 } 

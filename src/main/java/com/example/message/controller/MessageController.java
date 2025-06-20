@@ -295,6 +295,11 @@ public class MessageController {
         return "main_user";
     }
 
+    @GetMapping("/minigame")
+    public String minigamePage() {
+        return "minigame";
+    }
+
     @GetMapping("/mainForUsers")
     public String mainPageForUsers() {
         return "mainForUsers.html";

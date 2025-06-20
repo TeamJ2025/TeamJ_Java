@@ -90,3 +90,8 @@ button:hover, input[type="submit"]:hover {
 .center {
     text-align: center;
 }
+
+.muted {
+    background-color: #f5f5f5;
+    color: #999;
+}

@@ -78,5 +78,16 @@ public class SalesDataService {
     public void saveSales(Sales sales) {
         salesRepository.save(sales);
     }
+
+    public Beer getBeerByName(String beerName) {
+        return beerRepository.findByBeerNameAndIsDeletedFalse(beerName)
+                .orElseThrow(() -> new RuntimeException("指定されたビール名が見つかりません: " + beerName));
+    }
+    
+    public void saveAll(List<Sales> salesList) {
+        salesRepository.saveAll(salesList);
+    }
+
+
     
 }

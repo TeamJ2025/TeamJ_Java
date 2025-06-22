@@ -1,6 +1,7 @@
 package com.example.message.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -119,8 +120,40 @@ public class SalesDataController {
                 .toList();
 
         Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(filtered);
+        
+        //修正するところ
+        LocalDate firstDate = LocalDate.of(year, month, 1);
+        LocalDate lastDate = firstDate.withDayOfMonth(firstDate.lengthOfMonth());
 
-        model.addAttribute("dailySummary", dailySummary);
+        // 全日付をループして、データがなければ空のエントリを補完
+        Map<LocalDate, Map<String, Object>> completeSummary = new LinkedHashMap<>();
+        for (LocalDate date = firstDate; !date.isAfter(lastDate); date = date.plusDays(1)) {
+            if (dailySummary.containsKey(date)) {
+                completeSummary.put(date, dailySummary.get(date));
+            } else {
+                completeSummary.put(date, Map.of(
+                    "beerData", new HashMap<>(),
+                    "totalBottles", 0,
+                    "totalAmount", 0
+                ));
+            }
+        }
+        // 日付順に並んだ List<Entry<LocalDate, Map<String, Object>>> を作成
+        List<Map.Entry<LocalDate, Map<String, Object>>> orderedSummary = new ArrayList<>(completeSummary.entrySet());
+
+
+        int dayOfWeekIndex = firstDate.getDayOfWeek().getValue() % 7;
+
+        // ✅ ログ確認用（デバッグ）
+        System.out.println("firstDate = " + firstDate + ", dayOfWeek = " + firstDate.getDayOfWeek() + ", index = " + dayOfWeekIndex);
+
+
+        model.addAttribute("dayOfWeekIndex", dayOfWeekIndex);
+
+
+        model.addAttribute("firstDate", firstDate);
+        model.addAttribute("dailySummaryList", orderedSummary);
+
         model.addAttribute("year", year);
         model.addAttribute("month", month);
 

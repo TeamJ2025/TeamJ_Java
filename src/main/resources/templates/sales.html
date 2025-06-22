@@ -144,7 +144,7 @@
     </div>
 
     <!-- カレンダー表示 -->
-    <div th:if="${dailySummary != null}" class="calendar">
+    <div th:if="${dailySummaryList != null}" class="calendar">
         <!-- 曜日ヘッダー -->
         <div class="calendar-day-header">日</div>
         <div class="calendar-day-header">月</div>
@@ -154,24 +154,29 @@
         <div class="calendar-day-header">金</div>
         <div class="calendar-day-header">土</div>
 
+
+        <!-- 月初日の曜日に合わせて空白セル -->
+        <th:block th:if="${firstDate != null}" th:with="dow=${dayOfWeekIndex}">
+            <th:block th:each="i : ${#numbers.sequence(1, dow)}">
+                <div class="calendar-day"></div>
+            </th:block>
+        </th:block>
+
+
+
         <!-- 各日のデータ -->
-        <div th:each="entry : ${dailySummary}" class="calendar-day">
+        <div th:each="entry : ${dailySummaryList}" class="calendar-day">
             <div class="calendar-day-content">
-                <!-- 日付 -->
                 <p th:text="${#temporals.format(entry.key, 'MM/dd')}">日付</p>
 
-                <!-- ビール別データ（必要なら表示） -->
-                <!--
-                <div th:each="beerEntry : ${entry.value.beerData}">
-                    <p th:text="${beerEntry.key}">ビール名</p>
-                    <p th:text="'本数: ' + ${beerEntry.value.bottles} + '本'"></p>
-                    <p th:text="'金額: ' + ${#numbers.formatInteger(beerEntry.value.amount, 0, 'COMMA')} + ' 円'"></p>
-                </div>
-                -->
-
-                <!-- 合計 -->
-                <p th:text="'合計本数: ' + ${entry.value.totalBottles} + '本'">合計本数</p>
-                <p th:text="'合計金額: ' + ${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + ' 円'">合計金額</p>
+                <!-- データあり/なしで表示切り替え -->
+                <th:block th:if="${entry.value.totalBottles > 0}">
+                    <p th:text="'合計本数: ' + ${entry.value.totalBottles} + '本'"></p>
+                    <p th:text="'合計金額: ' + ${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + ' 円'"></p>
+                </th:block>
+                <th:block th:unless="${entry.value.totalBottles > 0}">
+                    <p style="color: #bbb;">データなし</p>
+                </th:block>
             </div>
         </div>
     </div>

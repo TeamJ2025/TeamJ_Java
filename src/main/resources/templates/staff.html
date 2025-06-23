@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -76,5 +76,189 @@
     <a href="/main"><button>メインページに戻る</button></a>
     <a href="/staff_change"><button>スタッフを修正する</button></a>
 </main>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>スタッフ一覧</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 権限バッジ */
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .role-admin {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .role-user {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* ボタンスタイル */
+        button, input[type="submit"] {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            letter-spacing: 1.5px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            background-color: #e67e22;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 管理用ボタン（オレンジ色） */
+        .btn-manage {
+            background-color: #f39c12;
+        }
+
+        .btn-manage:hover {
+            background-color: #e67e22;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        /* ボタンコンテナ */
+        .button-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        /* リンクをボタンスタイルに */
+        a.button-link {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 24px;
+            font-size: 18px;
+            letter-spacing: 1.5px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 10px 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        a.button-link:hover {
+            background-color: #e67e22;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        a.button-link.btn-manage {
+            background-color: #f39c12;
+        }
+
+        a.button-link.btn-manage:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>スタッフ一覧</h1>
+    </header>
+
+    <div class="container">
+        <!-- スタッフ一覧テーブル -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名前</th>
+                    <th>メールアドレス</th>
+                    <th>権限</th>
+                    <th>登録日</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${messages}">
+                    <td th:text="${user.id}">ID</td>
+                    <td th:text="${user.name}">名前</td>
+                    <td th:text="${user.email}">メール</td>
+                    <td>
+                        <span th:class="${user.role == 'admin'} ? 'role-badge role-admin' : 'role-badge role-user'"
+                            th:text="${user.role == 'admin'} ? '管理者' : '従業員'">
+                            権限
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy/MM/dd')}">登録日</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- データが空の場合 -->
+        <div th:if="${#lists.isEmpty(messages)}" class="center">
+            <p style="color: #7f8c8d; font-size: 1.2em; margin: 40px 0;">登録されているスタッフがいません。</p>
+        </div>
+
+        <!-- ボタンコンテナ -->
+        <div class="button-container">
+            <a href="/main" class="button-link">メインページに戻る</a>
+            <a href="/staff_change" class="button-link btn-manage">スタッフを管理する</a>
+        </div>
+    </div>
 </body>
 </html>

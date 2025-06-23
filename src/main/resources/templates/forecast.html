@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        
 <head>
     <meta charset="UTF-8">
     <title>一週間分の需要予測</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -12,8 +11,16 @@
             margin: 0;
             padding: 0;
         }
-
-
+        .forecast-box.total-box {
+            margin: 0 auto; 
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            padding: 15px;
+            border-left: 5px solid red;
+            margin-bottom: 20px;
+        }
         h1 {
             background-color: #2c3e50;
             color: white;
@@ -23,13 +30,11 @@
             font-size: 24px;
             width: 100%;
         }
-
         .button-container {
             color: #2c3e50;
             margin: 20px 0;
             text-align: center;
         }
-
         .button-link {
             display: inline-block;
             background-color: #34495e;
@@ -40,13 +45,11 @@
             border: 1px solid #ccc;
             font-weight: bold;
         }
-                
-        .button-link:hover{
-            background-color:#e67e22;
+        .button-link:hover {
+            background-color: #e67e22;
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-
         .forecast-container {
             display: flex;
             flex-wrap: wrap;
@@ -54,7 +57,6 @@
             gap: 20px;
             padding: 20px;
         }
-
         .forecast-box {
             background-color: white;
             border-radius: 4px;
@@ -63,38 +65,32 @@
             padding: 15px;
             border-left: 5px solid #2c3e50;
         }
-
         .forecast-box p {
             margin: 8px 0;
             font-size: 14px;
         }
-
         .forecast-box h4 {
             margin-top: 20px;
             margin-bottom: 10px;
             font-size: 16px;
             color: #2c3e50;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 5px;
             font-size: 14px;
         }
-
         th, td {
             border: 1px solid #ccc;
             padding: 6px;
             text-align: center;
         }
-
         th {
             background-color: #34495e;
             color: white;
         }
-
-        aside{
+        aside {
             width: 250px;
             height: 100%;
             background-color: #6e879c;
@@ -103,103 +99,115 @@
             top: 0;
             left: -250px;
             float: left;
-            flex: 0 0 250px;
             transition: 0.5s;
-
         }
-
-
-        .container{
+        .container {
             display: flex;
         }
-
-        aside ul{
+        aside ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         aside li a {
             display: block;
-            height: 100%;
-            line-height: 100%;
-            padding:10px 20px;
+            padding: 10px 20px;
             color: #fdf8f8;
             font-size: 20px;
             text-decoration: none;
-            font:bold;
-            border-top: 1px solid rgba(255, 255 ,255,0.5);
+            font-weight: bold;
+            border-top: 1px solid rgba(255,255,255,0.5);
             border-bottom: 1px solid;
             transition: 0.4s;
         }
-
-        aside li a:hover{
+        .total-box {
+            border-left: 5px solid red !important;
+        }
+        aside li a:hover {
             background-color: #e67e22;
             padding-left: 50px;
         }
-
-    @media (max-width:768px){
-    aside{
-        width:100%;
-        position: static;
+        @media (max-width:768px) {
+            aside {
+                width:100%;
+                position: static;
+            }
         }
-    }
-    
-    #check{
-        display: none;
-    }
-
-    label #hambergerBtn,
-    label #cancel{
-        position: absolute;
-        cursor: pointer;
-        border-radius: 3px;
-    }
-
-    label #hambergerBtn{
-        background-color: hsl(209, 32%, 44%);
-        left: 40px;
-        top:20px;
-        font-size: 25px;
-        color: white;
-        padding: 6px 12px;
-        transition: all 0.5s;
-    }
-
-    label #cancel{
-        z-index: 10;
-        left: -195px;
-        top: 2px;
-        font-size: 30px;
-        color: white;
-        padding: 4px 9px;
-    }
-
-    #check:checked ~ aside{
-        left:0;
-    }
-    
-    #check:checked ~ label #hambergerBtn{
-        left: 250px;
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    #check:checked ~ label #cancel{
-        left: 195px;
-        transition: all 0.5s;
-
-    }
-
+        #check {
+            display: none;
+        }
+        label #hambergerBtn,
+        label #cancel {
+            position: absolute;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        label #hambergerBtn {
+            background-color: hsl(209, 32%, 44%);
+            left: 40px;
+            top: 20px;
+            font-size: 25px;
+            color: white;
+            padding: 6px 12px;
+            transition: all 0.5s;
+        }
+        label #cancel {
+            z-index: 10;
+            left: -195px;
+            top: 2px;
+            font-size: 30px;
+            color: white;
+            padding: 4px 9px;
+        }
+        #check:checked ~ aside {
+            left: 0;
+        }
+        #check:checked ~ label #hambergerBtn {
+            left: 250px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #check:checked ~ label #cancel {
+            left: 195px;
+            transition: all 0.5s;
+        }
     </style>
 </head>
 <body>
 <h1>一週間分の需要予測</h1>
 
-    <div class="button-container">
-        <a href="/main" class="button-link">メインページに戻る</a>
-    </div>
+<div class="button-container">
+    <a href="/main" class="button-link">メインページに戻る</a>
+</div>
 
+<!-- 累計表示ボックス -->
+<div class="forecast-box total-box">
+    <h4>累計本数（<span th:text="${startDate}"></span> ～ <span th:text="${endDate}"></span>）</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>累計推測需要本数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${totalPrediction.entrySet()}">
+                <td th:switch="${entry.key}">
+                    <span th:case="'white_beer_bottles'">ホワイトビール</span>
+                    <span th:case="'black_beer_bottles'">黒ビール</span>
+                    <span th:case="'pale_ale_bottles'">ペールエール</span>
+                    <span th:case="'fruit_beer_bottles'">フルーツビール</span>
+                    <span th:case="'ipa_bottles'">IPA</span>
+                    <span th:case="'lager_bottles'">ラガー</span>
+                    <span th:case="*" th:text="${entry.key}">不明</span>
+                </td>
+                <td th:text="${T(java.lang.Math).round(entry.value)} + ' 本'"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 各日ごとの予測データ -->
 <div class="forecast-container">
     <div class="forecast-box" th:each="forecast : ${forecastList}">
         <p><strong>日付:</strong> <span th:text="${forecast['date']}"></span></p>
@@ -218,7 +226,15 @@
             </thead>
             <tbody>
                 <tr th:each="entry : ${forecast['prediction'].entrySet()}">
-                    <td th:text="${entry.key}"></td>
+                    <td th:switch="${entry.key}">
+                        <span th:case="'white_beer_bottles'">ホワイトビール</span>
+                        <span th:case="'black_beer_bottles'">黒ビール</span>
+                        <span th:case="'pale_ale_bottles'">ペールエール</span>
+                        <span th:case="'fruit_beer_bottles'">フルーツビール</span>
+                        <span th:case="'ipa_bottles'">IPA</span>
+                        <span th:case="'lager_bottles'">ラガー</span>
+                        <span th:case="*" th:text="${entry.key}">不明</span>
+                    </td>
                     <td th:text="${entry.value} + ' 本'"></td>
                 </tr>
             </tbody>
@@ -226,22 +242,22 @@
     </div>
 </div>
 
-    <input type="checkbox" id="check">
-    <label for="check">
-        <i class="fa fa-bars"  id="hambergerBtn"></i>
-        <i class="fa fa-times"  id="cancel"></i>
-    </label>
+<!-- ハンバーガーメニュー -->
+<input type="checkbox" id="check">
+<label for="check">
+    <i class="fa fa-bars" id="hambergerBtn"></i>
+    <i class="fa fa-times" id="cancel"></i>
+</label>
 
-    <aside>
-        <ul>
-            <li><a href="/main">メインメニュー</a></li>
-            <li><a href="/Performance/Input">販売実績入力</a></li>
-            <li><a href="/sales">販売実績一覧</a></li>
-            <li><a href="/forecast">需要予測</a></li>
-            <li><a href="/brands">銘柄管理</a></li>
-            <li><a href="/staff">スタッフ管理</a></li>
-        </ul>
-    </aside>
-
+<aside>
+    <ul>
+        <li><a href="/main">メインメニュー</a></li>
+        <li><a href="/Performance/Input">販売実績入力</a></li>
+        <li><a href="/sales">販売実績一覧</a></li>
+        <li><a href="/forecast">需要予測</a></li>
+        <li><a href="/brands">銘柄管理</a></li>
+        <li><a href="/staff">スタッフ管理</a></li>
+    </ul>
+</aside>
 </body>
 </html>

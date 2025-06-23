@@ -38,8 +38,11 @@
         }
 
 
-        .container{
-            display: flex;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
         }
 
         aside ul{
@@ -137,7 +140,7 @@
             <tr th:each="entry, iterStat : ${confirmList}">
                 <td th:text="${entry.beer.beerName} + '：'"></td>
                 <td th:text="${entry.soldBottles} + ' 本'"></td>
-                <!-- hidden送信用 -->
+
                 <input type="hidden" name="beerIds" th:value="${entry.beersId}" />
                 <input type="hidden" name="quantities" th:value="${entry.soldBottles}" />
             </tr>

@@ -94,7 +94,12 @@
     </style>
 </head>
 <body>
-<h1>一週間分の販売予測</h1>
+    <h1>一週間分の販売予測</h1>
+
+    <div class="button-container">
+        <a href="/main" class="button-link">メインページに戻る</a>
+    </div>
+
 
     <div class="button-container">
         <a href="/main" class="button-link">メインページに戻る</a>
@@ -108,22 +113,23 @@
         <p><strong>気温:</strong> <span th:text="${forecast['temperature_2m_mean']} + '℃'"></span></p>
         <p><strong>予約数:</strong> <span th:text="${forecast['reservationCount']} + ' 人'"></span></p>
 
-        <h4>需要予測</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>商品名</th>
-                    <th>本数</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="entry : ${forecast['prediction'].entrySet()}">
-                    <td th:text="${entry.key}"></td>
-                    <td th:text="${entry.value} + ' 本'"></td>
-                </tr>
-            </tbody>
-        </table>
+
+            <h4>需要予測</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th>本数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${forecast.predictedItems}">
+                        <td th:text="${entry.key}"></td>
+                        <td th:text="${entry.value} + ' 本'"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 </body>
 </html>

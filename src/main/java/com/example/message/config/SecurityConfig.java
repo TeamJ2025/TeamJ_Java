@@ -11,28 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .authorizeHttpRequests(auth -> auth
-    //             .requestMatchers("/","/login", "/register", "/css/**", "/img/**", "/js/**").permitAll()
-    //             // .requestMatchers("/Performance/**").authenticated()
-    //             .anyRequest().authenticated()
-    //         )
-    //         .formLogin(form -> form
-    //             .loginPage("/login")
-    //             .defaultSuccessUrl("/main", true)
-    //             .permitAll()
-    //         )
-    //         .logout(logout -> logout
-    //             .logoutSuccessUrl("/login?logout")
-    //             .permitAll()
-    //         );
-
-    //     return http.build();
-    // }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>売上データ一覧</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .form-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-inline label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-inline select {
+            width: 55px;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            appearance: none;
+        }
+
+        .display-button {
+            background-color: #888;
+            color: white;
+            width: 55px;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .display-button:hover {
+            background-color: #666;
+            transform: scale(1.03);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            font-size: 20px;
+            justify-content: center;
+        }
+
+        .calendar-day-header {
+            font-weight: bold;
+            background-color: #ecf0f1;
+            color: #333;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            padding: 12px;
+            min-height: 120px;
+            min-width: 130px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin: 0;
+        }
+
+        .calendar-day-content {
+            display: flex;
+            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            gap: 6px;
+            height: 100%;
+            font-size: 18px;
+        }
+
+        .calendar-day-content .date {
+            margin: 0;
+            color: #3c3c3c;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .calendar-day-content .data {
+            color: #444;
+            line-height: 1.4;
+            font-weight: normal;
+            white-space: pre-line;
+            margin: 2px 0;
+        }
+
+        .calendar-day-content .muted {
+            color: #666;
+            font-style: italic;
+            line-height: 1.6;
+            white-space: pre-line;
+            background-color: transparent;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .button-link {
+            text-decoration: none;
+        }
+
+        .divider-thick {
+            width: 100%;
+            height: 2px;
+            background-color: #ccc;
+            margin: 6px 0;
+            border-radius: 2px;
+        }
+
+        .divider-thin {
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+            margin: 4px 0;
+            border-radius: 1px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>売上データ一覧</h1>
+</header>
+
+<div class="container">
+    <div class="button-container">
+        <a href="/main" class="button-link"><button type="button">メインページに戻る</button></a>
+        <a th:href="@{/sales_change(year=${year}, month=${month})}" class="button-link"><button type="button">過去データの修正</button></a>
+    </div>
+
+    <div class="form-wrapper">
+        <form action="/sales" method="get" class="form-inline">
+            <label for="year">年:</label>
+            <select name="year" id="year">
+                <option th:selected="${year == 2024}" value="2024">2024</option>
+                <option th:selected="${year == 2025}" value="2025">2025</option>
+            </select>
+
+            <label for="month">月:</label>
+            <select name="month" id="month">
+                <option th:each="m : ${#numbers.sequence(1, 12)}"
+                        th:value="${m}"
+                        th:text="${m + '月'}"
+                        th:selected="${m == month}">1月</option>
+            </select>
+
+            <button type="submit" class="display-button">表示</button>
+        </form>
+    </div>
+
+    <div th:if="${message != null}">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${dailySummaryList != null}" class="calendar">
+        <div class="calendar-day-header">日</div>
+        <div class="calendar-day-header">月</div>
+        <div class="calendar-day-header">火</div>
+        <div class="calendar-day-header">水</div>
+        <div class="calendar-day-header">木</div>
+        <div class="calendar-day-header">金</div>
+        <div class="calendar-day-header">土</div>
+
+        <th:block th:if="${firstDate != null}" th:with="dow=${dayOfWeekIndex}">
+            <th:block th:each="i : ${#numbers.sequence(1, dow)}">
+                <div class="calendar-day">
+                    <div class="calendar-day-content">
+                        <p class="date">&nbsp;</p>
+                    </div>
+                </div>
+            </th:block>
+        </th:block>
+
+        <div th:each="entry : ${dailySummaryList}" class="calendar-day">
+            <div class="calendar-day-content">
+                <p class="date" th:text="${#temporals.format(entry.key, 'MM/dd')}">日付</p>
+
+                <th:block th:if="${entry.value.totalBottles > 0}">
+                    <div class="divider-thick"></div>
+
+                    <p class="data">合計本数🍺</p>
+                    <p class="data" th:text="${entry.value.totalBottles + '本'}"></p>
+
+                    <div class="divider-thin"></div>
+
+                    <p class="data">合計金額💰</p>
+                    <p class="data" th:text="${#numbers.formatInteger(entry.value.totalAmount, 0, 'COMMA')} + '円'"></p>
+                </th:block>
+
+                <th:block th:unless="${entry.value.totalBottles > 0}">
+                    <p class="muted">データなし</p>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

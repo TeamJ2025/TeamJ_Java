@@ -95,20 +95,61 @@ public class SalesDataController {
     //     return "Input";
     // }
 
-    @GetMapping("/sales_edit")
-    public String editSalesForDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                    Model model) {
+    @GetMapping("/salesforusers")
+    public String editSalesForDate(
+            @RequestParam(required = false, defaultValue = "2024") int year,
+            @RequestParam(required = false, defaultValue = "1") int month,
+            Model model) {
 
-    if (date == null) {
-        date = LocalDate.now();
-    }
-    
-        List<Sales> salesList = service.getSalesByDate(date);
-        model.addAttribute("date", date);
-        model.addAttribute("salesList", salesList);
-        return "sales_edit";
-    }
+        List<Sales> allSalesList = service.getAllSalesData();
 
+        List<Sales> filtered = allSalesList.stream()
+                .filter(s -> {
+                    LocalDate date = s.getSalesDate();
+                    return date.getYear() == year && date.getMonthValue() == month;
+                })
+                .toList();
+
+        Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(filtered);
+        
+        //修正するところ
+        LocalDate firstDate = LocalDate.of(year, month, 1);
+        LocalDate lastDate = firstDate.withDayOfMonth(firstDate.lengthOfMonth());
+
+        // 全日付をループして、データがなければ空のエントリを補完
+        Map<LocalDate, Map<String, Object>> completeSummary = new LinkedHashMap<>();
+        for (LocalDate date = firstDate; !date.isAfter(lastDate); date = date.plusDays(1)) {
+            if (dailySummary.containsKey(date)) {
+                completeSummary.put(date, dailySummary.get(date));
+            } else {
+                completeSummary.put(date, Map.of(
+                    "beerData", new HashMap<>(),
+                    "totalBottles", 0,
+                    "totalAmount", 0
+                ));
+            }
+        }
+        // 日付順に並んだ List<Entry<LocalDate, Map<String, Object>>> を作成
+        List<Map.Entry<LocalDate, Map<String, Object>>> orderedSummary = new ArrayList<>(completeSummary.entrySet());
+
+
+        int dayOfWeekIndex = firstDate.getDayOfWeek().getValue() % 7;
+
+        // ✅ ログ確認用（デバッグ）
+        System.out.println("firstDate = " + firstDate + ", dayOfWeek = " + firstDate.getDayOfWeek() + ", index = " + dayOfWeekIndex);
+
+
+        model.addAttribute("dayOfWeekIndex", dayOfWeekIndex);
+
+
+        model.addAttribute("firstDate", firstDate);
+        model.addAttribute("dailySummaryList", orderedSummary);
+
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+
+        return "salesforusers";
+    }
 
     @GetMapping("/sales")
     public String showSalesDataGet(

@@ -1,23 +1,16 @@
     <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <head>
         <meta charset="UTF-8">
         <title>銘柄管理</title>
         <style>
             body {
+                margin:0;
                 font-family: Arial, sans-serif;
                 padding: 0px;
-                margin: 0px;
                 background-color: #f9f9f9;
             }
 
-            header {
-                background-color: #2c3e50;
-                color: white;
-                padding: 20px 0;
-                text-align: center;
-                width: 100%;
-            }
             .container {
                 max-width: 800px;
                 margin: 30px auto;
@@ -27,6 +20,16 @@
             h1, h2 {
                 text-align: center;
                 color: #2c3e50;
+            }
+
+            h1{
+                background-color: #2c3e50;
+                color: white;
+                text-align: center;
+                padding: 30px 0;
+                margin: 0;
+                font-size: 24px;
+                width: 100%;
             }
 
             table {
@@ -80,7 +83,7 @@
             }
             .form-group {
                 width: 50%;
-                margin: 0 auto;
+                margin: 0;
             }
 
             button, input[type="submit"] {
@@ -133,14 +136,111 @@
             }
             .form-wrapper {
             text-align: left;
-            margin-top: 0px;
+            margin-top: 30px;
             }
+
+        aside{
+            width: 250px;
+            height: 100%;
+            background-color: #6e879c;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            float: left;
+            flex: 0 0 250px;
+            transition: 0.5s;
+
+        }
+
+
+        .container{
+            display: flex;
+        }
+
+        aside ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside li a {
+            display: block;
+            height: 100%;
+            line-height: 100%;
+            padding:10px 20px;
+            color: #fdf8f8;
+            font-size: 20px;
+            text-decoration: none;
+            font:bold;
+            border-top: 1px solid rgba(255, 255 ,255,0.5);
+            border-bottom: 1px solid;
+            transition: 0.4s;
+        }
+
+        aside li a:hover{
+            background-color: #e67e22;
+            padding-left: 50px;
+        }
+
+    @media (max-width:768px){
+    aside{
+        width:100%;
+        position: static;
+        }
+    }
+    
+    #check{
+        display: none;
+    }
+
+    label #hambergerBtn,
+    label #cancel{
+        position: absolute;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    label #hambergerBtn{
+        background-color: hsl(209, 32%, 44%);
+        left: 40px;
+        top:20px;
+        font-size: 25px;
+        color: white;
+        padding: 6px 12px;
+        transition: all 0.5s;
+    }
+
+    label #cancel{
+        z-index: 10;
+        left: -195px;
+        top: 2px;
+        font-size: 30px;
+        color: white;
+        padding: 4px 9px;
+    }
+
+    #check:checked ~ aside{
+        left:0;
+    }
+    
+    #check:checked ~ label #hambergerBtn{
+        left: 250px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    #check:checked ~ label #cancel{
+        left: 195px;
+        transition: all 0.5s;
+
+    }
 
     </style>
     </head>
     <body>
     <header>
-        <h1 class = manage>ビール銘柄の管理</h1>
+        <h1 class = manage>銘柄管理</h1>
     </header>
 
     <h2>登録済みの銘柄</h2>
@@ -189,5 +289,23 @@
     <form action="/main" method="get">
         <input type="submit" value="トップに戻る">
     </form>
+
+    
+    <input type="checkbox" id="check">
+    <label for="check">
+        <i class="fa fa-bars"  id="hambergerBtn"></i>
+        <i class="fa fa-times"  id="cancel"></i>
+    </label>
+
+    <aside>
+        <ul>
+            <li><a href="/main">メインメニュー</a></li>
+            <li><a href="/Performance/Input">販売実績入力</a></li>
+            <li><a href="/sales">販売実績一覧</a></li>
+            <li><a href="/forecast">需要予測</a></li>
+            <li><a href="/brands">銘柄管理</a></li>
+            <li><a href="/staff">スタッフ管理</a></li>
+        </ul>
+    </aside>
 </body>
 </html>

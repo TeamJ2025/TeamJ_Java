@@ -93,31 +93,62 @@ public class MessageController {
     
 
     @GetMapping("/forecast")
-        public String getForecast(Model model) {
-            List<Map<String, Object>> fullList = forecastService.fetchForecast();
+    public String getForecast(Model model) {
+        List<Map<String, Object>> fullList = forecastService.fetchForecast();
 
-            List<Map<String, Object>> slicedList = new ArrayList<>();
-            for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
-                Map<String, Object> item = fullList.get(i);
+        List<Map<String, Object>> slicedList = new ArrayList<>();
+        Map<String, Double> totalPrediction = new HashMap<>();
 
-                // 日付をパースして曜日を取得
-                String dateStr = item.get("date").toString();
-                LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
-                String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+        LocalDate startDate = null;
+        LocalDate endDate = null;
 
-                item.put("dayOfWeek", dayOfWeek);
-                item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
-                item.put("reservationCount", 20);
-                slicedList.add(item);
+        for (int i = 2; i < fullList.size(); i++) {
+            Map<String, Object> item = fullList.get(i);
 
-            if (dayOfWeek.equals("土曜日")) {
-                break; // 土曜日のデータまでで終了
+            String dateStr = item.get("date").toString();
+            LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+
+            if (dayOfWeek.equals("日曜日")) {
+                continue;
+            }
+
+            if (startDate == null) startDate = date;
+            endDate = date;
+
+            item.put("dayOfWeek", dayOfWeek);
+            item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+            item.put("reservationCount", 20);
+
+            Object predictionObj = item.get("prediction");
+            if (predictionObj instanceof Map<?, ?> rawMap) {
+                Map<String, Double> prediction = new HashMap<>();
+                for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+                    if (entry.getKey() instanceof String key && entry.getValue() instanceof Number value) {
+                        double bottles = value.doubleValue();
+                        prediction.put(key, bottles);
+                        totalPrediction.merge(key, bottles, Double::sum);
+                    }
+                }
+                item.put("prediction", prediction);
+            }
+
+            slicedList.add(item);
+
+            if (dayOfWeek.equals("月曜日")) {
+                break;
             }
         }
 
-            model.addAttribute("forecastList", slicedList);
-            return "forecast";
-        }
+        model.addAttribute("forecastList", slicedList);
+        model.addAttribute("totalPrediction", totalPrediction);
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        return "forecast";
+    }
+
 
 
     // @GetMapping("/forecast")
@@ -175,11 +206,10 @@ public class MessageController {
 
     @GetMapping("/main")
     public String mainPage(Authentication authentication) {
-        // ログインユーザーの権限を確認して画面を分岐
         if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
-            return "main";  // 管理者用画面（main.html）
+            return "main";
         } else {
-            return "main_user";  // 一般ユーザー用画面（main_user.html）
+            return "main_user";
         }
     }
 
@@ -462,28 +492,28 @@ public class MessageController {
         return "redirect:/sales";
     }
 
-@GetMapping("/salesforusers")
-public String salesForUsers(@RequestParam(required = false, defaultValue = "2025") int year,
-                            @RequestParam(required = false, defaultValue = "1") int month,
-                            Model model) {
+// @GetMapping("/salesforusers")
+// public String salesForUsers(@RequestParam(required = false, defaultValue = "2025") int year,
+//                             @RequestParam(required = false, defaultValue = "1") int month,
+//                             Model model) {
 
-    List<Sales> allSalesList = salesDataService.getAllSalesData();
+//     List<Sales> allSalesList = salesDataService.getAllSalesData();
 
-    List<Sales> filtered = allSalesList.stream()
-            .filter(s -> {
-                LocalDate date = s.getSalesDate();
-                return date.getYear() == year && date.getMonthValue() == month;
-            })
-            .toList();
+//     List<Sales> filtered = allSalesList.stream()
+//             .filter(s -> {
+//                 LocalDate date = s.getSalesDate();
+//                 return date.getYear() == year && date.getMonthValue() == month;
+//             })
+//             .toList();
 
-    Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
+//     Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
 
-    model.addAttribute("dailySummary", dailySummary);
-    model.addAttribute("year", year);
-    model.addAttribute("month", month);
+//     model.addAttribute("dailySummary", dailySummary);
+//     model.addAttribute("year", year);
+//     model.addAttribute("month", month);
 
-    return "salesforusers";
-    }
+//     return "salesforusers";
+//     }
 
 
 

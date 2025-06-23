@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <title>売上データ修正</title>
     <link rel="stylesheet" href="/css/style.css"> <!-- 共通CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         .container {
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
         .button-container {
             text-align: center;
-            margin: 30px 0;
-        }
-
-        a.button, button {
-            width: 250px;
+            margin: 40px 0;
         }
 
         .table-wrapper {
@@ -27,10 +24,13 @@
         table {
             width: 100%;
             table-layout: fixed;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             background-color: #ffffff;
             border: 1px solid #ddd;
-            font-size: 16px;
+            font-size: 20px;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
         th, td {
@@ -56,21 +56,43 @@
             border-radius: 6px;
             border: 1px solid #ccc;
             text-align: center;
-            font-size: 16px;
+            font-size: 20px;
             box-sizing: border-box;
+        }
+
+        /* テーブル角丸 */
+        thead tr:first-child th:first-child {
+            border-top-left-radius: 16px;
+        }
+
+        thead tr:first-child th:last-child {
+            border-top-right-radius: 16px;
+        }
+
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 16px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 16px;
         }
     </style>
 </head>
 <body>
 
-<header>
+<header style="margin-bottom: 30px;">
     <h1>売上データ修正</h1>
 </header>
 
 <div class="container">
 
     <div class="button-container">
-        <a th:href="@{/sales(year=${year}, month=${month})}" class="button">売上一覧に戻る</a>
+        <a th:href="@{/sales(year=${year}, month=${month})}"
+           style="display: inline-block; text-align: center; background-color: #2c3e50; color: white;
+                  padding: 12px 24px; font-size: 18px; letter-spacing: 1.5px; border-radius: 8px;
+                  text-decoration: none; width: 250px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            売上一覧に戻る
+        </a>
     </div>
 
     <form action="/sales_change" method="post">
@@ -106,6 +128,23 @@
     </form>
 
 </div>
+
+            <!-- <input type="checkbox" id="check">
+    <label for="check">
+        <i class="fa fa-bars"  id="hambergerBtn"></i>
+        <i class="fa fa-times"  id="cancel"></i>
+    </label>
+
+    <aside>
+        <ul>
+            <li><a href="/main">メインメニュー</a></li>
+            <li><a href="/Performance/Input">販売実績入力</a></li>
+            <li><a href="/sales">販売実績一覧</a></li>
+            <li><a href="/forecast">需要予測</a></li>
+            <li><a href="/brands">銘柄管理</a></li>
+            <li><a href="/staff">スタッフ管理</a></li>
+        </ul>
+    </aside> -->
 
 </body>
 </html>

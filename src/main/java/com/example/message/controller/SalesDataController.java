@@ -137,14 +137,9 @@ public class SalesDataController {
 
         // ✅ ログ確認用（デバッグ）
         System.out.println("firstDate = " + firstDate + ", dayOfWeek = " + firstDate.getDayOfWeek() + ", index = " + dayOfWeekIndex);
-
-
         model.addAttribute("dayOfWeekIndex", dayOfWeekIndex);
-
-
         model.addAttribute("firstDate", firstDate);
         model.addAttribute("dailySummaryList", orderedSummary);
-
         model.addAttribute("year", year);
         model.addAttribute("month", month);
 
@@ -180,7 +175,7 @@ public class SalesDataController {
                 } else {
                     String weather = service.getWeatherByDate(date)
                             .map(WeatherData::getWeatherDescription)
-                            .orElse("データなし");
+                            .orElse("データ無");
 
                     completeSummary.put(date, Map.of(
                             "beerData", new HashMap<>(),
@@ -250,9 +245,9 @@ public class SalesDataController {
                                 String weather_code;
 
                                 if (date.getDayOfWeek().getValue() == 7) {  // ← ★ ここ修正！
-                                    weather_code = "データなし";
+                                    weather_code = "データ無";
                                 } else {
-                                    String weather = weatherMap.getOrDefault(date, "データなし");
+                                    String weather = weatherMap.getOrDefault(date, "データ無");
 
                                     try {
                                         int code = Integer.parseInt(weather);
@@ -266,7 +261,7 @@ public class SalesDataController {
                                             weather_code = "不明";
                                         }
                                     } catch (NumberFormatException e) {
-                                        weather_code = "データなし";
+                                        weather_code = "データ無";
                                     }
                                 }
 

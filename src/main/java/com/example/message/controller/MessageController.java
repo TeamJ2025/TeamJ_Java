@@ -35,6 +35,7 @@ import com.example.message.service.ForecastService;
 import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
+import com.example.message.model.ForecastResult;
 
 @Controller
 public class MessageController {
@@ -110,7 +111,7 @@ public class MessageController {
             slicedList.add(item);
 
             if (dayOfWeek.equals("土曜日")) {
-                break;  // 土曜日のデータまでで終了
+                break; // 土曜日のデータまでで終了
             }
         }
 

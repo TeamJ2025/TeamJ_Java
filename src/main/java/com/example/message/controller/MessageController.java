@@ -220,7 +220,8 @@ public class MessageController {
 
     @PostMapping("/Performance/Confirm")
     public String submitSalesData(
-            @RequestParam("salesDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate salesDate,
+            // @RequestParam("salesDate") 
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate salesDate,
             @RequestParam("beerIds") List<Integer> beerIds,
             @RequestParam("quantities") List<Integer> quantities,
             Model model

@@ -21,8 +21,12 @@ public class MessageService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Message> getAllMessages(){
-        return repository.findAll();
+    // public List<Message> getAllMessages(){
+    //     return repository.findAll();
+    // }
+
+    public List<Message> getAllMessages() {
+        return repository.findByIsDeletedFalse(); // 変更
     }
 
     public void addMessage(String name, String email, String password){
@@ -41,4 +45,7 @@ public class MessageService {
         System.out.println(">>> message saved");
     }
 
+    
 }
+
+

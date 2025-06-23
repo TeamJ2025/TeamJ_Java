@@ -36,7 +36,6 @@ import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
 
-
 @Controller
 public class MessageController {
 
@@ -166,7 +165,7 @@ public class MessageController {
 
     @GetMapping("/staff")
     public String staffPage(Model model) {
-        List<Message> messages = service.getAllMessages();
+        List<Message> messages = repository.findByIsDeletedFalse(); // 変更
         model.addAttribute("messages", messages);
         return "staff";
     }
@@ -209,7 +208,8 @@ public class MessageController {
         return "PerformanceViewForUsers.html";
     }
 
-
+    @Autowired
+    private BeerRepository beerRepository;
     @GetMapping("/Performance/Input")
     public String input(Model model) {
         model.addAttribute("beerList", beerRepository.findByIsDeletedFalse());
@@ -288,9 +288,6 @@ public class MessageController {
         salesService.saveAll(salesList);
         return "redirect:/main";
     }
-    
-    @Autowired
-    private BeerRepository beerRepository;
 
     // 銘柄一覧ページ表示
     @GetMapping("/brands")
@@ -394,7 +391,6 @@ public class MessageController {
             ));
     }
 
-
     // スタッフ管理ページ表示（論理削除されていないもののみ）    
     @GetMapping("/staff_change")    
     public String showStaffChange(Model model) {        
@@ -408,10 +404,6 @@ public class MessageController {
             return "staff_change";        
         }    
     }
-
-
-
- 
 
     // パスワードエンコーダーを追加
     @Autowired
@@ -480,6 +472,7 @@ public String salesForUsers(@RequestParam(required = false, defaultValue = "2025
 
 
 
+    // スタッフ削除処理（論理削除に変更）
     @PostMapping("/staff/delete")
     public String deleteStaff(@RequestParam Integer id) {
         repository.deleteById(id);

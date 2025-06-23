@@ -35,6 +35,7 @@ import com.example.message.service.ForecastService;
 import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
+import com.example.message.model.ForecastResult;
 
 @Controller
 public class MessageController {

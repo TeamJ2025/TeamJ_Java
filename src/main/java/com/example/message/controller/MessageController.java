@@ -32,6 +32,7 @@ import com.example.message.model.Message;
 import com.example.message.repository.BeerRepository;
 import com.example.message.repository.MessageRepository;
 import com.example.message.service.ForecastService;
+import com.example.message.model.ForecastResult;
 import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
@@ -39,7 +40,6 @@ import com.example.message.model.ForecastResult;
 
 @Controller
 public class MessageController {
-
     private final MessageService service;
     private final MessageRepository repository;
     private final SalesService salesService;
@@ -77,7 +77,7 @@ public class MessageController {
                             Model model) {
         if(name.isBlank() || email.isBlank()|| password.isBlank()){
             model.addAttribute("error", "両方入力してください");
-            return "register"; 
+            return "register";
         } else {
             service.addMessage(name, email, password);
         }
@@ -121,31 +121,59 @@ public class MessageController {
 
 
     // @GetMapping("/forecast")
+    // public String getForecast(Model model) {
+    //     List<Map<String, Object>> fullList = forecastService.fetchForecast();
+
+    //     List<Map<String, Object>> slicedList = new ArrayList<>();
+    //     for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+    //         Map<String, Object> item = fullList.get(i);
+
+    //         // 日付をパースして曜日を取得
+    //         String dateStr = item.get("date").toString();
+    //         LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+    //         String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+
+    //         item.put("dayOfWeek", dayOfWeek);
+    //         item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+    //         item.put("reservationCount", 20);
+    //         slicedList.add(item);
+
+    //         if (dayOfWeek.equals("土曜日")) {
+    //             break;  // 土曜日のデータまでで終了
+    //         }
+    //     }
+
+    //     model.addAttribute("forecastList", slicedList);
+    //     return "forecast";
+    // }
+
+
+    // @GetMapping("/forecast")
     // public String getWeeklyForecast(Model model) {
     //     List<ForecastResult> weekForecast = new ArrayList<>();
 
     //     weekForecast.add(createDummy("2025-06-16", "月曜日", "晴れ", 22.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     weekForecast.add(createDummy("2025-06-16", "火曜日", "晴れ", 19.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     weekForecast.add(createDummy("2025-06-16", "水曜日", "晴れ", 22.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     weekForecast.add(createDummy("2025-06-16", "木曜日", "晴れ", 22.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     weekForecast.add(createDummy("2025-06-16", "金曜日", "晴れ", 22.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     weekForecast.add(createDummy("2025-06-16", "土曜日", "晴れ", 22.0, 10, Map.of(
-    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles", 
+    //         "pale_ale_bottles", 20, "lager_bottles", 15, "ipa_bottles", 12,"white_beer_bottles",
     //         8,"black_beer_bottles",6,"fruit_beer_bottles",2)));
 
     //     model.addAttribute("forecastList", weekForecast);
@@ -170,7 +198,7 @@ public class MessageController {
         model.addAttribute("messages", messages);
         return "staff";
     }
-    
+
 
 
     @GetMapping("/main")
@@ -198,7 +226,7 @@ public class MessageController {
     public String mainPageForUsers() {
         return "mainForUsers.html";
     }
-    
+
     @RequestMapping("/Performance/PerformanceView")
     public String start() {
         return "PerformanceView.html";
@@ -320,7 +348,7 @@ public class MessageController {
     @GetMapping("/sales_change")
     public String showSalesChangePage(@RequestParam int year, @RequestParam int month, Model model) {
         List<Sales> allSales = salesDataService.getAllSalesData();
- 
+
         // 指定年月でフィルタ
         List<Sales> filtered = allSales.stream()
                 .filter(s -> {
@@ -328,34 +356,34 @@ public class MessageController {
                     return date.getYear() == year && date.getMonthValue() == month;
                 })
                 .toList();
- 
+
         // 修正ポイント：戻り値の型と一致させる
         Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
- 
+
         model.addAttribute("dailySummary", dailySummary);
         model.addAttribute("year", year);
         model.addAttribute("month", month);
         model.addAttribute("beerList", salesDataService.getAllBeers()); // ビール一覧（列ヘッダーに使う）
- 
+
         return "sales_change";
     }
 
     @GetMapping("/message/sales_view") // 例：メッセージ画面から売上を見るとき
     public String showSalesDataInMessage(Model model) {
         List<Sales> salesList = salesDataService.getAllSalesData();
- 
+
         // 修正：戻り値型を正しく合わせる
         Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(salesList);
- 
+
         model.addAttribute("dailySummary", dailySummary);
         model.addAttribute("year", 2025);
         model.addAttribute("month", 6);
         model.addAttribute("beerList", salesDataService.getAllBeers()); // 必要ならこれも追加
- 
+
         return "sales"; // templates/sales.html を表示
     }
- 
- 
+
+
     private Map<LocalDate, Map<String, Map<String, Integer>>> createDailySummary(List<Sales> salesList) {
         return salesList.stream()
             .collect(Collectors.groupingBy(Sales::getSalesDate)) // 日付ごとにまとめる
@@ -367,12 +395,12 @@ public class MessageController {
                 entry -> {
                     List<Sales> salesForDate = entry.getValue();
                     Map<String, Map<String, Integer>> beerData = new HashMap<>();
- 
+
                     for (Sales sale : salesForDate) {
                         String beerName = sale.getBeer().getBeerName();
                         int bottles = sale.getSoldBottles();
                         int amount = bottles * sale.getBeer().getPrice();
- 
+
                         beerData.merge(
                             beerName,
                             new HashMap<>(Map.of("bottles", bottles, "amount", amount)),
@@ -385,7 +413,7 @@ public class MessageController {
                             }
                         );
                     }
- 
+
                     return beerData;
                 },
                 (a, b) -> a,
@@ -393,18 +421,18 @@ public class MessageController {
             ));
     }
 
-    // スタッフ管理ページ表示（論理削除されていないもののみ）    
-    @GetMapping("/staff_change")    
-    public String showStaffChange(Model model) {        
-        try {            List<Message> messages = repository.findByIsDeletedFalse(); 
-            // 変更            
-            model.addAttribute("messages", messages);           
-            return "staff_change";        
-        } catch (Exception e) {            
-            model.addAttribute("errorMessage", "データ取得エラー: " + e.getMessage());            
-            model.addAttribute("messages", new ArrayList<Message>());            
-            return "staff_change";        
-        }    
+    // スタッフ管理ページ表示（論理削除されていないもののみ）
+    @GetMapping("/staff_change")
+    public String showStaffChange(Model model) {
+        try {            List<Message> messages = repository.findByIsDeletedFalse();
+            // 変更
+            model.addAttribute("messages", messages);
+            return "staff_change";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "データ取得エラー: " + e.getMessage());
+            model.addAttribute("messages", new ArrayList<Message>());
+            return "staff_change";
+        }
     }
 
     // パスワードエンコーダーを追加
@@ -414,26 +442,26 @@ public class MessageController {
     @PostMapping("/sales_change")
     public String updateSalesData(@RequestParam Map<String, String> allParams) {
         List<Sales> updatedSalesList = new ArrayList<>();
- 
+
         for (Map.Entry<String, String> entry : allParams.entrySet()) {
             String key = entry.getKey(); // e.g., "ペールエール__2024-04-01"
             String value = entry.getValue();
- 
+
             if (!key.contains("__") || value.isBlank()) continue;
- 
+
             try {
                 String[] parts = key.split("__");
                 if (parts.length != 2) continue;
- 
+
                 String beerName = parts[0];
                 LocalDate date = LocalDate.parse(parts[1]);
                 int bottles = Integer.parseInt(value);
- 
+
                 // 該当するSalesデータを取得
                 List<Sales> salesList = salesDataService.getSalesByDate(date).stream()
                         .filter(s -> s.getBeer().getBeerName().equals(beerName))
                         .toList();
- 
+
                 if (!salesList.isEmpty()) {
                     // 既存データがある場合は更新
                     for (Sales sale : salesList) {
@@ -457,124 +485,8 @@ public class MessageController {
                 System.err.println("変換エラー: " + key + " = " + value);
             }
         }
- 
+
         salesService.saveAll(updatedSalesList);
         return "redirect:/sales";
     }
-
-@GetMapping("/salesforusers")
-public String salesForUsers(@RequestParam(required = false, defaultValue = "2025") int year,
-                            @RequestParam(required = false, defaultValue = "1") int month,
-                            Model model) {
-
-    List<Sales> allSalesList = salesDataService.getAllSalesData();
-
-    List<Sales> filtered = allSalesList.stream()
-            .filter(s -> {
-                LocalDate date = s.getSalesDate();
-                return date.getYear() == year && date.getMonthValue() == month;
-            })
-            .toList();
-
-    Map<LocalDate, Map<String, Map<String, Integer>>> dailySummary = createDailySummary(filtered);
-
-    model.addAttribute("dailySummary", dailySummary);
-    model.addAttribute("year", year);
-    model.addAttribute("month", month);
-
-    return "salesforusers";
-    }
-
-
-
-    // スタッフ削除処理（論理削除に変更）
-    @PostMapping("/staff/delete")
-    public String deleteStaff(@RequestParam Integer id) {
-        repository.deleteById(id);
-        return "redirect:/staff_change"; // 削除後に再読み込み
-    }
-
-    // ユーザー情報編集処理
-    @PostMapping("/staff/edit")
-    public String editStaff(@RequestParam Integer id,
-                            @RequestParam String name,
-                            @RequestParam String email,
-                            @RequestParam(required = false) String password,
-                            Model model) {
-        try {
-            // 入力値検証
-            if (name == null || name.trim().isEmpty()) {
-                model.addAttribute("errorMessage", "名前は必須です。");
-                List<Message> messages = repository.findAll();
-                model.addAttribute("messages", messages);
-                return "staff_change";
-            }
-            
-            if (email == null || email.trim().isEmpty()) {
-                model.addAttribute("errorMessage", "メールアドレスは必須です。");
-                List<Message> messages = repository.findAll();
-                model.addAttribute("messages", messages);
-                return "staff_change";
-            }
-
-            Message user = repository.findById(id).orElse(null);
-            if (user != null) {
-                user.setName(name.trim());
-                user.setEmail(email.trim());
-                
-                // パスワードが入力されている場合のみ更新
-                if (password != null && !password.trim().isEmpty()) {
-                    user.setPassword(passwordEncoder.encode(password));
-                }
-                
-                user.setUpdatedAt(LocalDateTime.now());
-                repository.save(user);
-                model.addAttribute("successMessage", "ユーザー情報を更新しました。");
-            } else {
-                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
-            }
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
-        }
-        
-        List<Message> messages = repository.findAll();
-        model.addAttribute("messages", messages);
-        return "staff_change";
-    }
-
-    // 権限変更処理
-    @PostMapping("/staff/role")
-    public String changeRole(@RequestParam Integer id,
-                            @RequestParam String newRole,
-                            Model model) {
-        try {
-            // 入力値検証（実際の権限値 'admin' と 'user' に対応）
-            if (!("admin".equals(newRole) || "user".equals(newRole))) {
-                model.addAttribute("errorMessage", "無効な権限です。");
-                List<Message> messages = repository.findAll();
-                model.addAttribute("messages", messages);
-                return "staff_change";
-            }
-
-            Message user = repository.findById(id).orElse(null);
-            if (user != null) {
-                user.setRole(newRole);
-                user.setUpdatedAt(LocalDateTime.now());
-                repository.save(user);
-                
-                String roleDisplayName = "admin".equals(newRole) ? "管理者" : "従業員";
-                model.addAttribute("successMessage", 
-                    user.getName() + "さんの権限を" + roleDisplayName + "に変更しました。");
-            } else {
-                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
-            }
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
-        }
-        
-        List<Message> messages = repository.findAll();
-        model.addAttribute("messages", messages);
-        return "staff_change";
-    }
-
-} 
+}

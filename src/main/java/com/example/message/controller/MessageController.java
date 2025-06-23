@@ -90,35 +90,31 @@ public class MessageController {
     
 
     @GetMapping("/forecast")
-    public String getForecast(Model model) {
-        List<Map<String, Object>> fullList = forecastService.fetchForecast();
+        public String getForecast(Model model) {
+            List<Map<String, Object>> fullList = forecastService.fetchForecast();
 
-        List<Map<String, Object>> slicedList = new ArrayList<>();
-        for (int i = 1; i < fullList.size(); i++) {
-            Map<String, Object> item = fullList.get(i);
+            List<Map<String, Object>> slicedList = new ArrayList<>();
+            for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+                Map<String, Object> item = fullList.get(i);
 
-            // 日付をパースして曜日を取得
-            String dateStr = item.get("date").toString();
-            LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
-            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+                // 日付をパースして曜日を取得
+                String dateStr = item.get("date").toString();
+                LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+                String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
 
-            if (dayOfWeek.equals("日曜日")) {
-                continue;
+                item.put("dayOfWeek", dayOfWeek);
+                item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+                item.put("reservationCount", 20);
+                slicedList.add(item);
+
+                if (dayOfWeek.equals("土曜日")) {
+                    break; // 土曜日のデータまでで終了
+                }
             }
 
-            item.put("dayOfWeek", dayOfWeek);
-            item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
-            item.put("reservationCount", 20);
-            slicedList.add(item);
-
-            if (dayOfWeek.equals("月曜日")) {
-                break;
-            }
+            model.addAttribute("forecastList", slicedList);
+            return "forecast";
         }
-
-        model.addAttribute("forecastList", slicedList);
-        return "forecast";
-    }
 
 
     // @GetMapping("/forecast")

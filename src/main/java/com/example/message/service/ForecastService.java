@@ -47,6 +47,9 @@ public class ForecastService {
             }
 
             ObjectMapper mapper = new ObjectMapper();
+            System.out.println("Received JSON:");
+            System.out.println(json.toString());
+            
             return mapper.readValue(json.toString(), new TypeReference<List<Map<String, Object>>>() {});
         } catch (Exception e) {
             e.printStackTrace();

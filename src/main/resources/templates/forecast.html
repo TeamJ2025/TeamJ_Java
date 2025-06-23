@@ -1,48 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    
+        
 <head>
     <meta charset="UTF-8">
     <title>一週間分の販売予測</title>
     <style>
         body {
-            font-family: sans-serif;
-            background-color: #ecf0f3;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
             padding: 0;
         }
 
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
-        }
 
         h1 {
             background-color: #2c3e50;
             color: white;
             text-align: center;
-            padding: 20px 0;
+            padding: 30px 0;
             margin: 0;
             font-size: 24px;
+            width: 100%;
         }
 
         .button-container {
+            color: #2c3e50;
             margin: 20px 0;
             text-align: center;
         }
 
         .button-link {
             display: inline-block;
-            background-color: #ecf0f1;
-            color: #2c3e50;
+            background-color: #34495e;
+            color:white;
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 6px;
             border: 1px solid #ccc;
             font-weight: bold;
+        }
+                
+        .button-link:hover{
+            background-color:#e67e22;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .forecast-container {
@@ -94,36 +95,36 @@
     </style>
 </head>
 <body>
-    <h1>一週間分の販売予測</h1>
+<h1>一週間分の販売予測</h1>
 
     <div class="button-container">
         <a href="/main" class="button-link">メインページに戻る</a>
     </div>
 
-    <div class="forecast-container">
-        <div class="forecast-box" th:each="forecast : ${forecastList}">
-            <p><strong>日付:</strong> <span th:text="${forecast.date}"></span></p>
-            <p><strong>曜日:</strong> <span th:text="${forecast.dayOfWeek}"></span></p>
-            <p><strong>天気:</strong> <span th:text="${forecast.weather}"></span></p>
-            <p><strong>気温:</strong> <span th:text="${forecast.temperature} + '℃'"></span></p>
-            <p><strong>予約数:</strong> <span th:text="${forecast.reservationCount} + ' 人'"></span></p>
+<div class="forecast-container">
+    <div class="forecast-box" th:each="forecast : ${forecastList}">
+        <p><strong>日付:</strong> <span th:text="${forecast['date']}"></span></p>
+        <p><strong>曜日:</strong> <span th:text="${forecast['dayOfWeek']}"></span></p>
+        <p><strong>天気:</strong> <span th:text="${forecast['weather']}"></span></p>
+        <p><strong>気温:</strong> <span th:text="${forecast['temperature_2m_mean']} + '℃'"></span></p>
+        <p><strong>予約数:</strong> <span th:text="${forecast['reservationCount']} + ' 人'"></span></p>
 
-            <h4>需要予測</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>商品名</th>
-                        <th>本数</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="entry : ${forecast.predictedItems}">
-                        <td th:text="${entry.key}"></td>
-                        <td th:text="${entry.value} + ' 本'"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <h4>需要予測</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>本数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry : ${forecast['prediction'].entrySet()}">
+                    <td th:text="${entry.key}"></td>
+                    <td th:text="${entry.value} + ' 本'"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+</div>
 </body>
 </html>

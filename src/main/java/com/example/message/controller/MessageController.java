@@ -414,10 +414,10 @@ public class MessageController {
         List<Sales> updatedSalesList = new ArrayList<>();
  
         for (Map.Entry<String, String> entry : allParams.entrySet()) {
-            String key = entry.getKey(); // totalBottles__2024-07-01 など
+            String key = entry.getKey(); // e.g., "ペールエール__2024-04-01"
             String value = entry.getValue();
  
-            if (!key.contains("__")) continue;
+            if (!key.contains("__") || value.isBlank()) continue;
  
             try {
                 String[] parts = key.split("__");
@@ -427,15 +427,29 @@ public class MessageController {
                 LocalDate date = LocalDate.parse(parts[1]);
                 int bottles = Integer.parseInt(value);
  
-                // 日付・ビール名で該当するSalesを取得
+                // 該当するSalesデータを取得
                 List<Sales> salesList = salesDataService.getSalesByDate(date).stream()
-                    .filter(s -> s.getBeer().getBeerName().equals(beerName))
-                    .toList();
+                        .filter(s -> s.getBeer().getBeerName().equals(beerName))
+                        .toList();
  
-                for (Sales sale : salesList) {
-                    sale.setSoldBottles(bottles);
-                    sale.setUpdatedAt(LocalDateTime.now());
-                    updatedSalesList.add(sale);
+                if (!salesList.isEmpty()) {
+                    // 既存データがある場合は更新
+                    for (Sales sale : salesList) {
+                        sale.setSoldBottles(bottles);
+                        sale.setUpdatedAt(LocalDateTime.now());
+                        updatedSalesList.add(sale);
+                    }
+                } else {
+                    // データが存在しない場合は新規作成
+                    Sales newSale = new Sales();
+                    newSale.setSalesDate(date);
+                    newSale.setSoldBottles(bottles);
+                    newSale.setCreatedAt(LocalDateTime.now());
+                    newSale.setUpdatedAt(LocalDateTime.now());
+                    newSale.setBeer(salesDataService.getBeerByName(beerName));
+                    newSale.setBeersId(newSale.getBeer().getId());
+                    newSale.setUsersId(1); // ※ここは適切なユーザーIDに置き換えてください
+                    updatedSalesList.add(newSale);
                 }
             } catch (Exception e) {
                 System.err.println("変換エラー: " + key + " = " + value);
@@ -443,9 +457,8 @@ public class MessageController {
         }
  
         salesService.saveAll(updatedSalesList);
-        return "redirect:/sales"; // 保存完了後に sales 一覧ページへ
+        return "redirect:/sales";
     }
-
 
 @GetMapping("/salesforusers")
 public String salesForUsers(@RequestParam(required = false, defaultValue = "2025") int year,

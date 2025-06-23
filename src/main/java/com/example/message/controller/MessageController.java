@@ -111,7 +111,7 @@ public class MessageController {
             slicedList.add(item);
 
             if (dayOfWeek.equals("土曜日")) {
-                break;  // 土曜日のデータまでで終了
+                break; // 土曜日のデータまでで終了
             }
         }
 

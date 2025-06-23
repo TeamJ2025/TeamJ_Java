@@ -276,7 +276,8 @@
         <input type="text" id="beerName" th:field="*{beerName}" required><br><br>
 
         <label for="price">価格：</label><br>
-        <input type="number" id="price" th:field="*{price}" required><br><br>
+        <input type="number" id="price" th:field="*{price}" min="0" required><br><br>
+ 
 
         <dev class = Jan>
         <label for="janCode">JANコード：</label><br>

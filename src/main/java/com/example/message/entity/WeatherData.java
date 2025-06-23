@@ -4,17 +4,17 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "weather")
+@Table(name = "weather_data")
 public class WeatherData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "observation_date", nullable = false)
+    @Column(name = "sale_day", nullable = false)
     private LocalDate observationDate;
 
-    @Column(name = "weather_description", nullable = false)
+    @Column(name = "weather_code", nullable = false)
     private String weatherDescription;
 
     // --- コンストラクタ ---

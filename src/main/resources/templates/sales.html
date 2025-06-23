@@ -311,6 +311,9 @@
             <div class="calendar-day-content">
                 <p class="date" th:text="${#temporals.format(entry.key, 'MM/dd')}">日付</p>
 
+                <p th:if="${#temporals.dayOfWeek(entry.key) != 7 and entry.value.weather != null}"
+                th:text="'天気: ' + ${entry.value.weather}">天気</p>
+
                 <th:block th:if="${entry.value.totalBottles > 0}">
                     <div class="divider-thick"></div>
 

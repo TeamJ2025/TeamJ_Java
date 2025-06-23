@@ -98,7 +98,7 @@ public class SalesDataController {
     @GetMapping("/salesforusers")
     public String editSalesForDate(
             @RequestParam(required = false, defaultValue = "2024") int year,
-            @RequestParam(required = false, defaultValue = "1") int month,
+            @RequestParam(required = false, defaultValue = "4") int month,
             Model model) {
 
         List<Sales> allSalesList = service.getAllSalesData();
@@ -152,118 +152,133 @@ public class SalesDataController {
     }
 
     @GetMapping("/sales")
-    public String showSalesDataGet(
-            @RequestParam(required = false, defaultValue = "2024") int year,
-            @RequestParam(required = false, defaultValue = "1") int month,
-            Model model) {
+        public String showSalesDataGet(
+                @RequestParam(required = false, defaultValue = "2024") int year,
+                @RequestParam(required = false, defaultValue = "4") int month,
+                Model model) {
 
-        List<Sales> allSalesList = service.getAllSalesData();
+            List<Sales> allSalesList = service.getAllSalesData();
 
-        List<Sales> filtered = allSalesList.stream()
-                .filter(s -> {
-                    LocalDate date = s.getSalesDate();
-                    return date.getYear() == year && date.getMonthValue() == month;
-                })
-                .toList();
+            List<Sales> filtered = allSalesList.stream()
+                    .filter(s -> {
+                        LocalDate date = s.getSalesDate();
+                        return date.getYear() == year && date.getMonthValue() == month;
+                    })
+                    .toList();
 
-        Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(filtered);
-        
-        //修正するところ
-        LocalDate firstDate = LocalDate.of(year, month, 1);
-        LocalDate lastDate = firstDate.withDayOfMonth(firstDate.lengthOfMonth());
+            Map<LocalDate, Map<String, Object>> dailySummary = createDailySummary(filtered);
 
-        // 全日付をループして、データがなければ空のエントリを補完
-        Map<LocalDate, Map<String, Object>> completeSummary = new LinkedHashMap<>();
-        for (LocalDate date = firstDate; !date.isAfter(lastDate); date = date.plusDays(1)) {
-            if (dailySummary.containsKey(date)) {
-                completeSummary.put(date, dailySummary.get(date));
-            } else {
-                completeSummary.put(date, Map.of(
-                    "beerData", new HashMap<>(),
-                    "totalBottles", 0,
-                    "totalAmount", 0
-                ));
+            LocalDate firstDate = LocalDate.of(year, month, 1);
+            LocalDate lastDate = firstDate.withDayOfMonth(firstDate.lengthOfMonth());
+
+            Map<LocalDate, Map<String, Object>> completeSummary = new LinkedHashMap<>();
+
+            for (LocalDate date = firstDate; !date.isAfter(lastDate); date = date.plusDays(1)) {
+                if (dailySummary.containsKey(date)) {
+                    completeSummary.put(date, dailySummary.get(date));
+                    
+                } else {
+                    String weather = service.getWeatherByDate(date)
+                            .map(WeatherData::getWeatherDescription)
+                            .orElse("データなし");
+
+                    completeSummary.put(date, Map.of(
+                            "beerData", new HashMap<>(),
+                            "totalBottles", 0,
+                            "totalAmount", 0,
+                            "weather", weather
+                    ));
+                }
             }
+
+            List<Map.Entry<LocalDate, Map<String, Object>>> orderedSummary = new ArrayList<>(completeSummary.entrySet());
+
+            int dayOfWeekIndex = firstDate.getDayOfWeek().getValue() % 7;
+
+            model.addAttribute("firstDate", firstDate);
+            model.addAttribute("dayOfWeekIndex", dayOfWeekIndex);
+            model.addAttribute("dailySummaryList", orderedSummary);
+            model.addAttribute("year", year);
+            model.addAttribute("month", month);
+
+            return "sales";
         }
-        // 日付順に並んだ List<Entry<LocalDate, Map<String, Object>>> を作成
-        List<Map.Entry<LocalDate, Map<String, Object>>> orderedSummary = new ArrayList<>(completeSummary.entrySet());
 
+        private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
+            List<LocalDate> dates = salesList.stream()
+                    .map(Sales::getSalesDate)
+                    .distinct()
+                    .toList();
 
-        int dayOfWeekIndex = firstDate.getDayOfWeek().getValue() % 7;
+            Map<LocalDate, String> weatherMap = service.getWeatherDataByDates(dates).stream()
+                    .collect(Collectors.toMap(
+                            WeatherData::getObservationDate,
+                            WeatherData::getWeatherDescription
+                    ));
 
-        // ✅ ログ確認用（デバッグ）
-        System.out.println("firstDate = " + firstDate + ", dayOfWeek = " + firstDate.getDayOfWeek() + ", index = " + dayOfWeekIndex);
+            return salesList.stream()
+                    .collect(Collectors.groupingBy(Sales::getSalesDate))
+                    .entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> {
+                                LocalDate date = entry.getKey();
+                                List<Sales> salesForDate = entry.getValue();
 
+                                Map<String, Map<String, Integer>> beerData = new HashMap<>();
+                                int totalBottles = 0;
+                                int totalAmount = 0;
 
-        model.addAttribute("dayOfWeekIndex", dayOfWeekIndex);
+                                for (Sales sale : salesForDate) {
+                                    String beerName = sale.getBeer().getBeerName();
+                                    int bottles = sale.getSoldBottles();
+                                    int amount = bottles * sale.getBeer().getPrice();
 
+                                    beerData.merge(beerName,
+                                            Map.of("bottles", bottles, "amount", amount),
+                                            (existing, newEntry) -> Map.of(
+                                                    "bottles", existing.get("bottles") + newEntry.get("bottles"),
+                                                    "amount", existing.get("amount") + newEntry.get("amount")
+                                            ));
 
-        model.addAttribute("firstDate", firstDate);
-        model.addAttribute("dailySummaryList", orderedSummary);
+                                    totalBottles += bottles;
+                                    totalAmount += amount;
+                                }
 
-        model.addAttribute("year", year);
-        model.addAttribute("month", month);
+                                String weather_code;
 
-        return "sales";
-    }
+                                if (date.getDayOfWeek().getValue() == 7) {  // ← ★ ここ修正！
+                                    weather_code = "データなし";
+                                } else {
+                                    String weather = weatherMap.getOrDefault(date, "データなし");
 
+                                    try {
+                                        int code = Integer.parseInt(weather);
+                                        if (code >= 0 && code <= 2) {
+                                            weather_code = "晴 🌞";
+                                        } else if (code >= 3 && code <= 49) {
+                                            weather_code = "曇 ☁️";
+                                        } else if (code >= 50) {
+                                            weather_code = "雨 ☔";
+                                        } else {
+                                            weather_code = "不明";
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        weather_code = "データなし";
+                                    }
+                                }
 
-    private Map<LocalDate, Map<String, Object>> createDailySummary(List<Sales> salesList) {
-        // 対象日付を収集
-        List<LocalDate> dates = salesList.stream()
-            .map(Sales::getSalesDate)
-            .distinct()
-            .toList();
-
-        // 天気データをまとめて取得
-        Map<LocalDate, String> weatherMap = service.getWeatherDataByDates(dates).stream()
-            .collect(Collectors.toMap(
-                WeatherData::getObservationDate,
-                WeatherData::getWeatherDescription
-            ));
-
-        return salesList.stream()
-            .collect(Collectors.groupingBy(Sales::getSalesDate))
-            .entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByKey())
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                entry -> {
-                    LocalDate date = entry.getKey();
-                    List<Sales> salesForDate = entry.getValue();
-
-                    Map<String, Map<String, Integer>> beerData = new HashMap<>();
-                    int totalBottles = 0;
-                    int totalAmount = 0;
-
-                    for (Sales sale : salesForDate) {
-                        String beerName = sale.getBeer().getBeerName();
-                        int bottles = sale.getSoldBottles();
-                        int amount = bottles * sale.getBeer().getPrice();
-
-                        beerData.merge(beerName,
-                            Map.of("bottles", bottles, "amount", amount),
-                            (existing, newEntry) -> Map.of(
-                                "bottles", existing.get("bottles") + newEntry.get("bottles"),
-                                "amount", existing.get("amount") + newEntry.get("amount")
-                            ));
-
-                        totalBottles += bottles;
-                        totalAmount += amount;
-                    }
-
-                    String weather = weatherMap.getOrDefault(date, "データなし");
-
-                    return Map.of(
-                        "beerData", beerData,
-                        "totalBottles", totalBottles,
-                        "totalAmount", totalAmount,
-                        "weather", weather
-                    );
-                },
-                (a, b) -> a,
-                LinkedHashMap::new
-            ));
-    }
+                                return Map.of(
+                                        "beerData", beerData,
+                                        "totalBottles", totalBottles,
+                                        "totalAmount", totalAmount,
+                                        "weather", weather_code
+                                );
+                            },
+                            (a, b) -> a,
+                            LinkedHashMap::new
+                    ));
+    }        
 }

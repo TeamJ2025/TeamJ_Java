@@ -38,7 +38,7 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests(auth -> auth
             // 誰でもアクセス可能（ログイン前）
-            .requestMatchers("/", "/login", "/register", "/css/**", "/img/**", "/js/**").permitAll()
+            .requestMatchers("/", "/login", "/register", "/css/**", "/img/**", "/js/**","/.well-known/**").permitAll()
             
             // 管理者のみアクセス可能
             .requestMatchers("/staff/**").hasAuthority("ADMIN")          // スタッフ管理

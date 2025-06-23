@@ -92,7 +92,7 @@
                         <td th:each="beer : ${beerList}">
                             <input type="number"
                                    th:name="${beer.beerName} + '__' + ${entry.key}"
-                                   th:value="${entry.value[beer.beerName]?.bottles}"
+                                   th:value="${entry.value[beer.beerName]?.bottles ?: 0}"
                                    min="0" />
                         </td>
                     </tr>

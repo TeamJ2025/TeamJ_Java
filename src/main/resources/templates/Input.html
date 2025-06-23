@@ -36,11 +36,6 @@
 </header>
 <div class="container">
     <form th:action="@{/Performance/Confirm}" method="post">
-        <!-- 販売日入力 -->
-        <div style="text-align: center; margin-bottom: 20px;">
-            <label>販売日:</label>
-            <input type="date" name="salesDate" required>
-        </div>
 
     <table class="input-table">
         <thead>
@@ -52,8 +47,6 @@
         </thead>
         <tbody>
             <tr th:each="beer : ${beerList}">
-                <td th:text="${beer.beerName}">ラガー</td>
-                <td th:text="${beer.price} + ' 円'">800円</td>
                 <td>
                     <input type="hidden" name="beerIds" th:value="${beer.id}" />
                     <input type="number" name="quantities" min="0" max="100" value="0" />
@@ -70,89 +63,3 @@
 </body>
 </html>
 
-
-<!-- <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>販売実績入力</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .input-table {
-            width: 100%;
-            margin-top: 50px;
-            table-layout: fixed;
-        }
-
-        .input-table th, .input-table td {
-            text-align: center;
-            padding: 10px;
-            width: 33.3%;
-        }
-
-        .input-table input[type="number"] {
-            width: 60px;
-            margin: 0 auto;
-        }
-
-        .button-center {
-            text-align: center;
-            margin-top: 40px;
-        }
-    </style>
-</head>
-<body>
-<header>
-    <h1>販売実績入力</h1>
-</header>
-<div class="container">
-    <form th:action="@{/Performance/Confirm}" th:object="${salesData}" method="post">
-        <table class="input-table">
-            <thead>
-                <tr>
-                    <th>商品名</th>
-                    <th>値段</th>
-                    <th>数量</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ホワイトビール</td>
-                    <td>900円</td>
-                    <td><input type="number" th:field="*{whiteBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>ラガー</td>
-                    <td>800円</td>
-                    <td><input type="number" th:field="*{lagerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>ペールエール</td>
-                    <td>1000円</td>
-                    <td><input type="number" th:field="*{paleAleBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>フルーツビール</td>
-                    <td>1000円</td>
-                    <td><input type="number" th:field="*{fruitBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>黒ビール</td>
-                    <td>1200円</td>
-                    <td><input type="number" th:field="*{blackBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>IPA</td>
-                    <td>900円</td>
-                    <td><input type="number" th:field="*{ipaBottles}" min="0" max="100"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="button-center">
-            <input type="submit" value="送信">
-        </div>
-    </form>
-</div>
-</body>
-</html> -->

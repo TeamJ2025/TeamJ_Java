@@ -148,8 +148,8 @@ public class SalesDataController {
 
     @GetMapping("/sales")
         public String showSalesDataGet(
-                @RequestParam(required = false, defaultValue = "2024") int year,
-                @RequestParam(required = false, defaultValue = "4") int month,
+                @RequestParam(required = false, defaultValue = "2025") int year,
+                @RequestParam(required = false, defaultValue = "1") int month,
                 Model model) {
 
             List<Sales> allSalesList = service.getAllSalesData();

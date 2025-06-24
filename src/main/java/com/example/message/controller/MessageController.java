@@ -491,4 +491,104 @@ public class MessageController {
         salesService.saveAll(updatedSalesList);
         return "redirect:/sales";
     }
+
+// スタッフ削除処理（論理削除）
+    @PostMapping("/staff/delete")
+    public String deleteStaff(@RequestParam Integer id) {
+        try {
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null);
+            if (user != null) {
+                user.setIsDeleted(true); // 論理削除フラグを設定
+                user.setUpdatedAt(LocalDateTime.now()); // 更新日時を設定
+                repository.save(user); // 保存
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/staff_change";
+    }
+
+    // スタッフ編集処理（論理削除されていないもののみ対象）
+    @PostMapping("/staff/edit")
+    public String editStaff(@RequestParam Integer id,
+                            @RequestParam String name,
+                            @RequestParam String email,
+                            @RequestParam(required = false) String password,
+                            Model model) {
+        try {
+            // 入力値検証
+            if (name == null || name.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "名前は必須です。");
+                List<Message> messages = repository.findByIsDeletedFalse();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+            
+            if (email == null || email.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "メールアドレスは必須です。");
+                List<Message> messages = repository.findByIsDeletedFalse();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null);
+            if (user != null) {
+                user.setName(name.trim());
+                user.setEmail(email.trim());
+                
+                // パスワードが入力されている場合のみ更新
+                if (password != null && !password.trim().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(password));
+                }
+                
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                model.addAttribute("successMessage", "ユーザー情報を更新しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "更新に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findByIsDeletedFalse();
+        model.addAttribute("messages", messages);
+        return "staff_change";
+    }
+
+    // 権限変更処理（論理削除されていないもののみ対象）
+    @PostMapping("/staff/role")
+    public String changeRole(@RequestParam Integer id,
+                             @RequestParam String newRole,
+                             Model model) {
+        try {
+            // 入力値検証
+            if (!("admin".equals(newRole) || "user".equals(newRole))) {
+                model.addAttribute("errorMessage", "無効な権限です。");
+                List<Message> messages = repository.findByIsDeletedFalse();
+                model.addAttribute("messages", messages);
+                return "staff_change";
+            }
+
+            Message user = repository.findByIdAndIsDeletedFalse(id).orElse(null);
+            if (user != null) {
+                user.setRole(newRole);
+                user.setUpdatedAt(LocalDateTime.now());
+                repository.save(user);
+                
+                String roleDisplayName = "admin".equals(newRole) ? "管理者" : "従業員";
+                model.addAttribute("successMessage", 
+                    user.getName() + "さんの権限を" + roleDisplayName + "に変更しました。");
+            } else {
+                model.addAttribute("errorMessage", "ユーザーが見つかりません。");
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "権限変更に失敗しました: " + e.getMessage());
+        }
+        
+        List<Message> messages = repository.findByIsDeletedFalse();
+        model.addAttribute("messages", messages);
+        return "staff_change";
+    }
+
 }

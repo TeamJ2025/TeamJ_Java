@@ -417,6 +417,11 @@ public class MessageController {
         return "Input";
     }
 
+    @GetMapping("/Performance/InputForUsers")
+    public String inputForUsers(Model model) {
+        model.addAttribute("beerList", beerRepository.findByIsDeletedFalse());
+        return "InputForUsers";
+    }
 
     @PostMapping("/Performance/Confirm")
     public String submitSalesData(

@@ -3,12 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <title>販売実績入力</title>
-    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column; /* ← これ追加 */
+            align-items: center;     /* ← 中央揃え */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            width: 50%;
+        }
+
+        th {
+            background-color: #ecf0f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;  /* 中央寄せ */
+            gap: 30px;                /* ボタン間の間隔 */
+            margin-top: 40px;
+        }
+
+        .sales-table th,
+        .sales-table td {
+            width: 33.3%;
+        }
+
+        input[type="text"], input[type="number"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .form-group {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+
+        a.button-link, button, input[type="submit"] {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            letter-spacing: 1.5px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            width: 250px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            background-color: #e67e22;
+            transform: scale(1.05); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+
+        .center {
+            text-align: center;
+        }
+
+        .muted {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+
         .input-table {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 50px;
             table-layout: fixed;
         }
 
@@ -16,19 +122,21 @@
             text-align: center;
             padding: 10px;
             width: 33.3%;
+            font-size: 18px;
         }
 
         .input-table input[type="number"] {
             width: 60px;
             margin: 0 auto;
+            font-size: 18px;
         }
 
         .button-center {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 40px;
         }
 
-                aside{
+        aside{
             width: 250px;
             height: 100%;
             background-color: #6e879c;
@@ -93,7 +201,7 @@
     label #hambergerBtn{
         background-color: hsl(209, 32%, 44%);
         left: 40px;
-        top:20px;
+        top:10px;
         font-size: 25px;
         color: white;
         padding: 6px 12px;
@@ -132,52 +240,42 @@
     <h1>販売実績入力</h1>
 </header>
 <div class="container">
-    <form th:action="@{/Performance/ConfirmForUsers}" th:object="${salesData}" method="get">
-        <table class="input-table">
-            <thead>
-                <tr>
-                    <th>商品名</th>
-                    <th>値段</th>
-                    <th>数量</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ホワイトビール</td>
-                    <td>900円</td>
-                    <td><input type="number" th:field="*{whiteBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>ラガー</td>
-                    <td>800円</td>
-                    <td><input type="number" th:field="*{lagerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>ペールエール</td>
-                    <td>1000円</td>
-                    <td><input type="number" th:field="*{paleAleBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>フルーツビール</td>
-                    <td>1000円</td>
-                    <td><input type="number" th:field="*{fruitBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>黒ビール</td>
-                    <td>1200円</td>
-                    <td><input type="number" th:field="*{blackBeerBottles}" min="0" max="100"></td>
-                </tr>
-                <tr>
-                    <td>IPA</td>
-                    <td>900円</td>
-                    <td><input type="number" th:field="*{ipaBottles}" min="0" max="100"></td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- <label for="salesDate">販売日：</label>
+        <input type="date" id="salesDate" name="salesDate" required> -->
+    <form th:action="@{/Performance/Confirm}" method="post">
 
-        <div class="button-center">
+    <table class="input-table">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>値段</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="beer : ${beerList}">
+                <td th:text="${beer.beerName}">ラガー</td>
+                <td th:text="${beer.price} + ' 円'">800円</td>
+                <td>
+                    <input type="hidden" name="beerIds" th:value="${beer.id}" />
+                    <input type="number" name="quantities" min="0" max="100" value="0" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+        <!-- <div class="button-center">
             <input type="submit" value="送信">
-        </div>
+        </div> -->
+
+    <div class="button-container">
+        <button type="button" onclick="location.href='/main'">メインページに戻る</button>
+        <button type="submit">送信</button>
+    </div>
+        <!-- <div class="button-container">
+            <a href="/main" class="button-link">メインページに戻る</a>
+        </div> -->
+
     </form>
 </div>
 
@@ -194,6 +292,7 @@
             <li><a href="/forecast">需要予測</a></li>
         </ul>
     </aside>
+
 
 </body>
 </html>

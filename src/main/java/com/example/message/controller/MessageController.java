@@ -97,55 +97,58 @@ public class MessageController {
         List<Map<String, Object>> fullList = forecastService.fetchForecast();
 
         List<Map<String, Object>> slicedList = new ArrayList<>();
-        for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
+        Map<String, Double> totalPrediction = new HashMap<>();
+
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+
+        for (int i = 2; i < fullList.size(); i++) {
             Map<String, Object> item = fullList.get(i);
 
-            // 日付をパースして曜日を取得
             String dateStr = item.get("date").toString();
             LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
             String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
 
+            if (dayOfWeek.equals("日曜日")) {
+                continue;
+            }
+
+            if (startDate == null) startDate = date;
+            endDate = date;
+
             item.put("dayOfWeek", dayOfWeek);
             item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
             item.put("reservationCount", 20);
+
+            Object predictionObj = item.get("prediction");
+            if (predictionObj instanceof Map<?, ?> rawMap) {
+                Map<String, Double> prediction = new HashMap<>();
+                for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+                    if (entry.getKey() instanceof String key && entry.getValue() instanceof Number value) {
+                        double bottles = value.doubleValue();
+                        prediction.put(key, bottles);
+                        totalPrediction.merge(key, bottles, Double::sum);
+                    }
+                }
+                item.put("prediction", prediction);
+            }
+
             slicedList.add(item);
 
-            if (dayOfWeek.equals("土曜日")) {
-                break; // 土曜日のデータまでで終了
+            if (dayOfWeek.equals("月曜日")) {
+                break;
             }
         }
 
         model.addAttribute("forecastList", slicedList);
+        model.addAttribute("totalPrediction", totalPrediction);
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
         return "forecast";
     }
 
-
-    // @GetMapping("/forecast")
-    // public String getForecast(Model model) {
-    //     List<Map<String, Object>> fullList = forecastService.fetchForecast();
-
-    //     List<Map<String, Object>> slicedList = new ArrayList<>();
-    //     for (int i = 1; i < fullList.size(); i++) { // 1件目はスキップ
-    //         Map<String, Object> item = fullList.get(i);
-
-    //         // 日付をパースして曜日を取得
-    //         String dateStr = item.get("date").toString();
-    //         LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
-    //         String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
-
-    //         item.put("dayOfWeek", dayOfWeek);
-    //         item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
-    //         item.put("reservationCount", 20);
-    //         slicedList.add(item);
-
-    //         if (dayOfWeek.equals("土曜日")) {
-    //             break;  // 土曜日のデータまでで終了
-    //         }
-    //     }
-
-    //     model.addAttribute("forecastList", slicedList);
-    //     return "forecast";
-    // }
 
 
     // @GetMapping("/forecast")
@@ -203,11 +206,10 @@ public class MessageController {
 
     @GetMapping("/main")
     public String mainPage(Authentication authentication) {
-        // ログインユーザーの権限を確認して画面を分岐
         if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
-            return "main";  // 管理者用画面（main.html）
+            return "main";
         } else {
-            return "main_user";  // 一般ユーザー用画面（main_user.html）
+            return "main_user";
         }
     }
 

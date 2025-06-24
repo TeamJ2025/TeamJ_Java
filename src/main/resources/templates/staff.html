@@ -1,91 +1,9 @@
-<!-- <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>ログイン成功</title>
-    <style>
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 15px 30px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.8em;
-        }
-
-        main {
-            width: 90%;
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        button {
-            display: inline-block;
-            background-color: #2c3e50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: #34495e;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            width: 50%;
-        }
-
-        th {
-            background-color: #ecf0f1;
-            color: #333;
-            font-weight: bold;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>スタッフ一覧</h1>
-</header>
-
-<main>
-    
-    <ul th:each="msg : ${messages}">
-            <strong th:text="${msg.name}">名前</strong>:
-            <strong th:text="${msg.email}">メールアドレス</strong>:
-    </ul>
-
-    <a href="/main"><button>メインページに戻る</button></a>
-    <a href="/staff_change"><button>スタッフを修正する</button></a>
-</main>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <head>
     <meta charset="UTF-8">
     <title>スタッフ一覧</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -100,12 +18,6 @@
             padding: 20px 0;
             text-align: center;
             width: 100%;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 20px;
         }
 
         table {
@@ -132,23 +44,23 @@
             background-color: #f1f1f1;
         }
 
-        /* 権限バッジ */
         .role-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
         }
+
         .role-admin {
             background-color: #e74c3c;
             color: white;
         }
+
         .role-user {
             background-color: #3498db;
             color: white;
         }
 
-        /* ボタンスタイル */
         button, input[type="submit"] {
             background-color: #2c3e50;
             color: white;
@@ -169,7 +81,6 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* 管理用ボタン（オレンジ色） */
         .btn-manage {
             background-color: #f39c12;
         }
@@ -182,14 +93,18 @@
             text-align: center;
         }
 
-        /* ボタンコンテナ */
         .button-container {
-            margin: 30px 0;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
             text-align: center;
-            position: absolute;
+        }
+        .container {
+            max-width: 1000px;   /* テーブルの最大幅 */
+            margin: 30px auto;   /* 上下マージン＋中央寄せ */
+            padding: 0 20px;     /* モバイル用左右パディング */
         }
 
-        /* リンクをボタンスタイルに */
         a.button-link {
             display: inline-block;
             background-color: #2c3e50;
@@ -218,7 +133,7 @@
             background-color: #e67e22;
         }
 
-        aside{
+        aside {
             width: 250px;
             height: 100%;
             background-color: #6e879c;
@@ -227,17 +142,10 @@
             top: 0;
             left: -250px;
             float: left;
-            flex: 0 0 250px;
             transition: 0.5s;
-
         }
 
-
-        .container{
-            display: flex;
-        }
-
-        aside ul{
+        aside ul {
             list-style: none;
             padding: 0;
             margin: 0;
@@ -245,76 +153,72 @@
 
         aside li a {
             display: block;
-            height: 100%;
-            line-height: 100%;
-            padding:10px 20px;
+            padding: 10px 20px;
             color: #fdf8f8;
             font-size: 20px;
             text-decoration: none;
-            font:bold;
-            border-top: 1px solid rgba(255, 255 ,255,0.5);
+            font-weight: bold;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
             border-bottom: 1px solid;
             transition: 0.4s;
         }
 
-        aside li a:hover{
+        aside li a:hover {
             background-color: #e67e22;
             padding-left: 50px;
         }
 
-    @media (max-width:768px){
-    aside{
-        width:100%;
-        position: static;
+        @media (max-width:768px) {
+            aside {
+                width: 100%;
+                position: static;
+            }
         }
-    }
-    
-    #check{
-        display: none;
-    }
 
-    label #hambergerBtn,
-    label #cancel{
-        position: absolute;
-        cursor: pointer;
-        border-radius: 3px;
-    }
+        #check {
+            display: none;
+        }
 
-    label #hambergerBtn{
-        background-color: hsl(209, 32%, 44%);
-        left: 40px;
-        top:20px;
-        font-size: 25px;
-        color: white;
-        padding: 6px 12px;
-        transition: all 0.5s;
-    }
+        label #hambergerBtn,
+        label #cancel {
+            position: absolute;
+            cursor: pointer;
+            border-radius: 3px;
+        }
 
-    label #cancel{
-        z-index: 10;
-        left: -195px;
-        top: 2px;
-        font-size: 30px;
-        color: white;
-        padding: 4px 9px;
-    }
+        label #hambergerBtn {
+            background-color: hsl(209, 32%, 44%);
+            left: 40px;
+            top: 20px;
+            font-size: 25px;
+            color: white;
+            padding: 6px 12px;
+            transition: all 0.5s;
+        }
 
-    #check:checked ~ aside{
-        left:0;
-    }
-    
-    #check:checked ~ label #hambergerBtn{
-        left: 250px;
-        opacity: 0;
-        pointer-events: none;
-    }
+        label #cancel {
+            z-index: 10;
+            left: -195px;
+            top: 2px;
+            font-size: 30px;
+            color: white;
+            padding: 4px 9px;
+        }
 
-    #check:checked ~ label #cancel{
-        left: 195px;
-        transition: all 0.5s;
+        #check:checked ~ aside {
+            left: 0;
+        }
 
-    }
+        #check:checked ~ label #hambergerBtn {
+            left: 250px;
+            opacity: 0;
+            pointer-events: none;
+        }
 
+        #check:checked ~ label #cancel {
+            left: 195px;
+            transition: all 0.5s;
+        }
     </style>
 </head>
 <body>
@@ -323,7 +227,6 @@
     </header>
 
     <div class="container">
-        <!-- スタッフ一覧テーブル -->
         <table>
             <thead>
                 <tr>
@@ -341,21 +244,13 @@
                     <td th:text="${user.email}">メール</td>
                     <td>
                         <span th:class="${user.role == 'admin'} ? 'role-badge role-admin' : 'role-badge role-user'"
-                            th:text="${user.role == 'admin'} ? '管理者' : '従業員'">
-                            権限
-                        </span>
+                            th:text="${user.role == 'admin'} ? '管理者' : '従業員'">権限</span>
                     </td>
                     <td th:text="${#temporals.format(user.createdAt, 'yyyy/MM/dd')}">登録日</td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- データが空の場合 -->
-        <div th:if="${#lists.isEmpty(messages)}" class="center">
-            <p style="color: #7f8c8d; font-size: 1.2em; margin: 40px 0;">登録されているスタッフがいません。</p>
-        </div>
-
-        <!-- ボタンコンテナ -->
         <div class="button-container">
             <a href="/main" class="button-link">メインページに戻る</a>
             <a href="/staff_change" class="button-link btn-manage">スタッフを管理する</a>
@@ -363,10 +258,10 @@
     </div>
 
     <input type="checkbox" id="check">
-        <label for="check">
-            <i class="fa fa-bars"  id="hambergerBtn"></i>
-            <i class="fa fa-times"  id="cancel"></i>
-        </label>
+    <label for="check">
+        <i class="fa fa-bars" id="hambergerBtn"></i>
+        <i class="fa fa-times" id="cancel"></i>
+    </label>
 
     <aside>
         <ul>
@@ -378,6 +273,5 @@
             <li><a href="/staff">スタッフ管理</a></li>
         </ul>
     </aside>
-
 </body>
 </html>

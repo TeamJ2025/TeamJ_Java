@@ -86,21 +86,21 @@
     <form method="post" th:action="@{/register}">
         <input type="text" name="name" placeholder="名前">
         <input type="text" name="email" placeholder="メールアドレス">
-        <input type="text" name="password" placeholder="パスワード">
+        <input type="password" name="password" placeholder="パスワード">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> <!-- CSRF対策 -->
         <button type="submit">登録</button>
     </form>
 
     <p th:if="${error}" th:text="${error}" class="error"></p>
 
-    <h2>登録済みユーザー</h2>
+    <!-- <h2>登録済みユーザー</h2>
     <ul>
         <li th:each="msg : ${messages}">
             <strong th:text="${msg.name}">名前</strong>:
             <strong th:text="${msg.email}">メールアドレス</strong>:
             <span th:text="${msg.password}">パスワード</span>
         </li>
-    </ul>
+    </ul> -->
 </main>
     <form method="get" action="/login">
         <button type="submit">戻る</button>

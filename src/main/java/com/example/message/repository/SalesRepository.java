@@ -22,4 +22,5 @@ public interface SalesRepository extends JpaRepository<Sales, Integer> {
     
     // 特定ビールの販売データを取得
     List<Sales> findByBeersIdOrderBySalesDateDesc(Integer beersId);
+    
 }

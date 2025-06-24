@@ -247,7 +247,7 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <!-- <th>ID</th> -->
                 <th>銘柄名</th>
                 <th>価格</th>
                 <th>JANコード</th>
@@ -256,7 +256,7 @@
         </thead>
         <tbody>
             <tr th:each="beer : ${beerList}">
-                <td th:text="${beer.id}">1</td>
+                <!-- <td th:text="${beer.id}">1</td> -->
                 <td th:text="${beer.beerName}">ラガー</td>
                 <td th:text="${beer.price}">800</td>
                 <td th:text="${beer.janCode}">4901234567890</td>

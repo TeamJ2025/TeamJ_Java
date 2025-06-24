@@ -81,7 +81,7 @@ public class MessageController {
         }
         List<Message> messages = service.getAllMessages();
         model.addAttribute("messages", messages);
-        return "register";
+        return "login";
     }
 
     @GetMapping("/login")

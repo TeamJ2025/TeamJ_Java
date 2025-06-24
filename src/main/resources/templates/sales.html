@@ -255,7 +255,7 @@
 </head>
 <body>
 <header>
-    <h1>売上データ一覧</h1>
+    <h1>販売実績一覧</h1>
 </header>
 
 <div class="container">
@@ -267,13 +267,13 @@
     <div class="form-wrapper">
         <form action="/sales" method="get" class="form-inline">
             <label for="year">年:</label>
-            <select name="year" id="year">
+            <select name="year" id="year" value="2025">
                 <option th:selected="${year == 2024}" value="2024">2024</option>
                 <option th:selected="${year == 2025}" value="2025">2025</option>
             </select>
 
             <label for="month">月:</label>
-            <select name="month" id="month">
+            <select name="month" id="month" value="1">
                 <option th:each="m : ${#numbers.sequence(1, 12)}"
                         th:value="${m}"
                         th:text="${m + '月'}"

@@ -32,11 +32,9 @@ import com.example.message.model.Message;
 import com.example.message.repository.BeerRepository;
 import com.example.message.repository.MessageRepository;
 import com.example.message.service.ForecastService;
-import com.example.message.model.ForecastResult;
 import com.example.message.service.MessageService;
 import com.example.message.service.SalesDataService;
 import com.example.message.service.SalesService;
-import com.example.message.model.ForecastResult;
 
 @Controller
 public class MessageController {
@@ -193,6 +191,65 @@ public class MessageController {
     //     f.setPredictedItems(items);
     //     return f;
     // }
+
+
+    @GetMapping("/forecastForUsers")
+    public String getForecastForUsers(Model model) {
+        List<Map<String, Object>> fullList = forecastService.fetchForecast();
+
+        List<Map<String, Object>> slicedList = new ArrayList<>();
+        Map<String, Double> totalPrediction = new HashMap<>();
+
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+
+        for (int i = 2; i < fullList.size(); i++) {
+            Map<String, Object> item = fullList.get(i);
+
+            String dateStr = item.get("date").toString();
+            LocalDate date = LocalDate.parse(dateStr.substring(0, 10));
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.JAPANESE);
+
+            if (dayOfWeek.equals("日曜日")) {
+                continue;
+            }
+
+            if (startDate == null) startDate = date;
+            endDate = date;
+
+            item.put("dayOfWeek", dayOfWeek);
+            item.put("weather", ((int) item.get("weather_code") < 3) ? "晴れ" : "雨または曇り");
+            item.put("reservationCount", 20);
+
+            Object predictionObj = item.get("prediction");
+            if (predictionObj instanceof Map<?, ?> rawMap) {
+                Map<String, Double> prediction = new HashMap<>();
+                for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+                    if (entry.getKey() instanceof String key && entry.getValue() instanceof Number value) {
+                        double bottles = value.doubleValue();
+                        prediction.put(key, bottles);
+                        totalPrediction.merge(key, bottles, Double::sum);
+                    }
+                }
+                item.put("prediction", prediction);
+            }
+
+            slicedList.add(item);
+
+            if (dayOfWeek.equals("月曜日")) {
+                break;
+            }
+        }
+
+        model.addAttribute("forecastList", slicedList);
+        model.addAttribute("totalPrediction", totalPrediction);
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
+        return "forecastForUsers";
+    }
+
 
 
     @GetMapping("/staff")
